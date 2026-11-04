@@ -254,16 +254,35 @@ a{color:inherit}
 .belt-stage{position:relative;perspective:87.5rem;padding-block:1.5rem;-webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
 .belts{display:flex;flex-direction:column;gap:1.125rem;transform:rotateX(16deg) rotateY(-10deg) rotateZ(-3deg);transform-style:preserve-3d}
 .belt{overflow:visible;white-space:nowrap}
+/* As caixas das esteiras são invisíveis e estão no mesmo plano 3D dos logos: sem isso elas "roubam" o mouse de parte dos logos. Só o .tile recebe o ponteiro. */
+.belts,.belt,.belt__track{pointer-events:none}
 .belt__track{display:flex;gap:1.125rem;width:max-content;animation:belt var(--dur,50s) linear infinite;will-change:transform}
 .belt--rev .belt__track{animation-direction:reverse}
 .belt:hover .belt__track{animation-play-state:paused}
 @keyframes belt{from{transform:translate3d(0,0,0)}to{transform:translate3d(var(--shift,-50%),0,0)}}
-.tile{flex:none;width:13.75rem;height:8.25rem;border-radius:0.875rem;background:var(--paper);border:0.0625rem solid var(--line);display:block;overflow:hidden;padding:1.375rem 1.625rem;transition:transform .45s var(--ease),border-color .3s,background .3s,box-shadow .45s;box-shadow:0 0.5rem 0 var(--tile-sh)}
+/* .tile é a área de mouse (fica parada); só o .tile__card de dentro sobe. Assim o logo não "foge" do cursor. */
+.tile{flex:none;position:relative;width:13.75rem;height:8.25rem;pointer-events:auto}
+.tile:hover{z-index:2}
+.tile__card{width:100%;height:100%;border-radius:0.875rem;background:var(--paper);border:0.0625rem solid var(--line);overflow:hidden;padding:1.375rem 1.625rem;transition:transform .45s var(--ease),border-color .3s,box-shadow .45s;box-shadow:0 0.5rem 0 var(--tile-sh)}
 .tile img{display:block;width:100%;height:100%;object-fit:contain;object-position:center;filter:var(--logo-f);opacity:.9;transition:filter .3s,opacity .3s}
-.tile:hover{transform:translateY(-8px) scale(1.06);border-color:var(--green-hi);background:var(--paper);box-shadow:0 1.125rem 1.875rem rgba(23,34,26,.18),0 0 0 0.0625rem var(--green-hi)}
+.tile:hover .tile__card{transform:translateY(-8px) scale(1.06);border-color:var(--green-hi);box-shadow:0 1.125rem 1.875rem rgba(23,34,26,.18),0 0 0 0.0625rem var(--green-hi)}
 .tile:hover img{filter:var(--logo-fh);opacity:1}
+.clientes__acts{display:flex;flex-wrap:wrap;gap:0.75rem}
+/* Todas as marcas */
+.marcas{width:min(72rem,calc(100% - 2rem));max-height:min(88vh,60rem);padding:0;border:0.0625rem solid var(--line);border-radius:1.25rem;background:var(--bg-solid);color:var(--ink);box-shadow:0 1.875rem 5rem rgba(0,0,0,.45);overscroll-behavior:contain}
+.marcas::backdrop{background:rgba(15,26,18,.75);backdrop-filter:blur(0.375rem)}
+.marcas[open]{animation:marcas-in .4s var(--ease)}
+@keyframes marcas-in{from{opacity:0;transform:translateY(1.5rem) scale(.97)}to{opacity:1;transform:none}}
+.marcas__top{position:sticky;top:0;z-index:1;display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:1.25rem 1.5rem;background:var(--bg-solid);border-bottom:0.0625rem solid var(--line)}
+.marcas__top h3{margin:0;font:400 clamp(1.5rem,3vw,2rem)/1 var(--font-display);letter-spacing:.04em;text-transform:uppercase}
+.marcas__top .round{flex:none;width:2.75rem;height:2.75rem;border-color:var(--line-strong);background:transparent;color:var(--ink);font-size:1rem}
+.marcas__grid{list-style:none;margin:0;padding:1.5rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(10.5rem,1fr));gap:1rem}
+.marcas__grid li{display:flex;flex-direction:column;gap:0.5rem}
+.marcas__grid .tile{width:auto;height:7rem}
+.marcas__grid .tile__card{padding:1rem 1.25rem;box-shadow:0 0.375rem 0 var(--tile-sh)}
+.marcas__grid span{font-size:0.8125rem;line-height:1.3;color:var(--muted);text-align:center}
 .clientes__foot{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:1rem;margin-top:2rem;color:var(--muted);font-size:0.875rem}
-@media (max-width:640px){ .tile{width:10rem;height:6.25rem;padding:1rem 1.125rem} .belts{gap:0.75rem;transform:rotateX(12deg) rotateZ(-3deg)} .belt__track{gap:0.75rem} }
+@media (max-width:640px){ .tile{width:10rem;height:6.25rem} .tile__card{padding:1rem 1.125rem} .marcas__grid{grid-template-columns:repeat(2,1fr);padding:1rem;gap:0.75rem} .marcas__grid .tile{height:5.5rem} .marcas__top{padding:1rem} .belts{gap:0.75rem;transform:rotateX(12deg) rotateZ(-3deg)} .belt__track{gap:0.75rem} }
 
 /* Contato + cartão 3D */
 .contato{background:radial-gradient(90% 80% at 80% 20%, var(--mata-600) 0%, var(--mata-700) 60%)}
@@ -479,8 +498,12 @@ a{color:inherit}
     <div class="belt-stage" aria-hidden="true"><div class="belts" id="belts"></div></div>
     <div class="wrap">
       <ul class="sr" id="client-list"></ul>
-      <div class="clientes__foot"><span id="client-count">35 marcas embarcadas</span><a class="btn btn--line btn--sm" href="#contato">Quero embarcar <span class="arr" aria-hidden="true">→</span></a></div>
+      <div class="clientes__foot"><span id="client-count">35 marcas embarcadas</span><div class="clientes__acts"><button class="btn btn--line btn--sm" type="button" id="marcas-open" aria-haspopup="dialog">Ver todas as marcas</button><a class="btn btn--line btn--sm" href="#contato">Quero embarcar <span class="arr" aria-hidden="true">→</span></a></div></div>
     </div>
+    <dialog class="marcas" id="marcas" aria-labelledby="marcas-title">
+      <div class="marcas__top"><h3 id="marcas-title">Todas as marcas embarcadas</h3><button class="round" type="button" id="marcas-close" aria-label="Fechar lista de marcas">✕</button></div>
+      <ul class="marcas__grid" id="marcas-grid"></ul>
+    </dialog>
   </section>
 
   <!-- Travessia -->
@@ -767,11 +790,22 @@ a{color:inherit}
   /* ===== Esteiras 3D de clientes ===== */
   (function(){
     var box = $('#belts'), list = $('#client-list'), ROWS = 3, rows = [[],[],[]];
+    function tile(i){ return '<div class="tile"><div class="tile__card"><img src="clientes/' + (i + 1) + '.webp" alt="' + CLIENTS[i].replace(/"/g,'') + '" loading="lazy" decoding="async"></div></div>'; }
+    /* Todas as marcas: grade completa num <dialog> nativo (Esc e foco já vêm de graça) */
+    var dlg = $('#marcas'), opener = $('#marcas-open');
+    $('#marcas-grid').innerHTML = CLIENTS.map(function(name, i){ return '<li>' + tile(i) + '<span>' + name + '</span></li>'; }).join('');
+    $('#client-count').textContent = CLIENTS.length + ' marcas embarcadas';
+    if (dlg.showModal) {
+      opener.addEventListener('click', function(){ dlg.showModal(); document.documentElement.style.overflow = 'hidden'; });
+      $('#marcas-close').addEventListener('click', function(){ dlg.close(); });
+      dlg.addEventListener('click', function(e){ if (e.target === dlg) dlg.close(); }); /* clique fora fecha */
+      dlg.addEventListener('close', function(){ document.documentElement.style.overflow = ''; opener.focus({ preventScroll: true }); });
+    } else opener.hidden = true;
     CLIENTS.forEach(function(name, i){ rows[i % ROWS].push(i); var li = document.createElement('li'); li.textContent = name; list.appendChild(li); });
     var belts = rows.map(function(idx, r){
       var belt = document.createElement('div'); belt.className = 'belt' + (r % 2 ? ' belt--rev' : '');
       var track = document.createElement('div'); track.className = 'belt__track'; belt.appendChild(track); box.appendChild(belt);
-      var set = idx.map(function(i){ return '<div class="tile"><img src="clientes/' + (i + 1) + '.webp" alt="' + CLIENTS[i].replace(/"/g,'') + '" loading="lazy" decoding="async"></div>'; }).join('');
+      var set = idx.map(function(i){ return tile(i); }).join('');
       return { track: track, set: set, n: idx.length };
     });
     /* Repete o conjunto até cobrir 2x a largura da tela: a esteira nunca mostra buraco, do celular à TV. */
