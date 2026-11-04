@@ -23,7 +23,7 @@
   --bg:var(--mata-700); --bg-solid:var(--mata-800); --ink:#ffffff; --muted:#cfdccb; --line:rgba(255,255,255,.16); --line-strong:rgba(255,255,255,.22);
   --green:var(--mata-500); --green-hi:var(--farol); --ghost:rgba(255,255,255,.14);
   --btn-bg:var(--farol); --btn-ink:var(--tinta-fixa); --btn-hbg:#ffffff; --btn-hink:var(--tinta-fixa); --btn-line:rgba(255,255,255,.45);
-  --card-a:rgba(255,255,255,.08); --card-b:rgba(255,255,255,.03); --chip:rgba(255,255,255,.12); --chip-ink:#ffffff; --glare:rgba(255,255,255,.14);
+  --card-a:rgba(255,255,255,.08); --card-b:rgba(255,255,255,.03); --svc-dim:rgba(0,0,0,.3); --chip:rgba(255,255,255,.12); --chip-ink:#ffffff;
   --font-display:"Bebas Neue","Oswald","Arial Narrow",Impact,sans-serif;
   --font-sans:"Montserrat",system-ui,-apple-system,"Segoe UI",sans-serif;
   --ease:cubic-bezier(.22,.8,.24,1); --ease-io:cubic-bezier(.65,0,.35,1);
@@ -39,7 +39,7 @@
   --bg:var(--sand); --bg-solid:var(--sand); --ink:var(--tinta); --muted:var(--tinta-2); --line:var(--linha); --line-strong:var(--linha);
   --green:var(--mata-500); --green-hi:var(--brand-t); --ghost:var(--ghost-l);
   --btn-bg:var(--mata-500); --btn-ink:#ffffff; --btn-hbg:var(--mata-800); --btn-hink:#ffffff; --btn-line:var(--brand-t);
-  --card-a:var(--paper); --card-b:var(--paper); --chip:var(--sand-2); --chip-ink:var(--tinta); --glare:rgba(255,255,255,.5);
+  --card-a:var(--paper); --card-b:var(--paper); --svc-dim:rgba(23,34,26,.1); --chip:var(--sand-2); --chip-ink:var(--tinta);
   background:var(--bg); color:var(--ink);
 }
 .tone-dark{color:var(--ink)}
@@ -182,12 +182,11 @@ a{color:inherit}
 .lb__close{position:absolute;top:calc(0.875rem + env(safe-area-inset-top,0rem));right:calc(0.875rem + env(safe-area-inset-right,0rem))}
 .lb__cap{position:absolute;left:var(--gl);bottom:calc(0.875rem + env(safe-area-inset-bottom,0rem));font:400 1rem/1.125rem var(--font-display);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 
-/* Serviços: cards com tilt */
+/* Serviços: cards com hover simples (escurece e aumenta) */
 .grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1.125rem;perspective:75rem}
 @media (max-width:1020px){ .grid4{grid-template-columns:repeat(2,minmax(0,1fr))} }
 @media (max-width:560px){ .grid4{grid-template-columns:1fr} }
-.tilt{position:relative;transform-style:preserve-3d;transition:transform .5s var(--ease);will-change:transform}
-.svc{min-height:23.75rem;border-radius:1.125rem;background:linear-gradient(160deg,var(--card-a),var(--card-b));border:0.0625rem solid var(--line);box-shadow:0 1.25rem 2.5rem rgba(23,34,26,.08);padding:1.75rem 1.625rem;display:flex;flex-direction:column;gap:0.875rem;overflow:hidden}
+.svc{position:relative;min-height:23.75rem;border-radius:1.125rem;background:linear-gradient(160deg,var(--card-a),var(--card-b));border:0.0625rem solid var(--line);box-shadow:0 1.25rem 2.5rem rgba(23,34,26,.08);padding:1.75rem 1.625rem;display:flex;flex-direction:column;gap:0.875rem;overflow:hidden}
 .svc__n{position:absolute;right:0.875rem;top:-6px;font:400 9.375rem/1 var(--font-display);color:transparent;-webkit-text-stroke:0.0625rem var(--line-strong);transform:translateZ(-30px);pointer-events:none}
 .svc__icon{width:3.375rem;height:3.375rem;border-radius:0.875rem;background:var(--green);display:grid;place-items:center;transform:translateZ(3.125rem);box-shadow:0 0.875rem 1.875rem rgba(71,117,76,.4)}
 .svc__icon svg{width:1.625rem;height:1.625rem;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -195,8 +194,8 @@ a{color:inherit}
 .svc p{margin:0;color:var(--muted);font-size:0.9375rem;line-height:1.5rem;transform:translateZ(1.5625rem)}
 .svc ul{list-style:none;margin:auto 0 0;padding:1rem 0 0;border-top:0.0625rem solid var(--line);display:flex;flex-wrap:wrap;gap:0.375rem;transform:translateZ(1.25rem)}
 .svc li{font:600 0.75rem/1.125rem var(--font-sans);padding:0.25rem 0.625rem;border-radius:62.4375rem;background:var(--chip);color:var(--chip-ink)}
-.glare{position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:radial-gradient(25rem circle at var(--gx,50%) var(--gy,0%),var(--glare),transparent 50%);opacity:0;transition:opacity .3s}
-.tilt:hover .glare{opacity:1}
+.grid4 .svc{transition:opacity 1s var(--ease),transform .35s var(--ease),box-shadow .35s var(--ease)}
+.grid4 .svc:hover{transform:scale(1.04);box-shadow:inset 0 0 0 100vmax var(--svc-dim),0 1.125rem 1.875rem rgba(23,34,26,.18)}
 
 /* Travessia */
 .trav{background:var(--mata-800)}
@@ -461,10 +460,10 @@ a{color:inherit}
         <p class="head__aside rv">Cada frente funciona sozinha e rende mais junto. Contrate uma ou embarque no pacote completo.</p>
       </div>
       <div class="grid4">
-        <article class="tilt svc rv"><span class="svc__n" aria-hidden="true">01</span><span class="svc__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg></span><h3>Design</h3><p>Marcas, peças e embalagens com cara própria, prontas para o feed, a vitrine e o outdoor.</p><ul><li>Logo</li><li>Identidade visual</li><li>Social media</li><li>Embalagem</li></ul><span class="glare"></span></article>
-        <article class="tilt svc rv"><span class="svc__n" aria-hidden="true">02</span><span class="svc__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M16 10l6-3v10l-6-3z"/></svg></span><h3>Audio&shy;visual</h3><p>Do roteiro à edição: filmes de marca, tours, cobertura de eventos e reels que prendem nos primeiros segundos.</p><ul><li>Reels</li><li>Drone</li><li>Institucional</li><li>Eventos</li></ul><span class="glare"></span></article>
-        <article class="tilt svc rv"><span class="svc__n" aria-hidden="true">03</span><span class="svc__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 6-6"/><path d="M15 8h5v5"/></svg></span><h3>Marketing</h3><p>Planejamento, calendário e gestão de redes com metas claras e relatório do que funcionou.</p><ul><li>Planejamento</li><li>Gestão de redes</li><li>Tráfego pago</li></ul><span class="glare"></span></article>
-        <article class="tilt svc rv"><span class="svc__n" aria-hidden="true">04</span><span class="svc__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 11l18-8v18L3 13z"/><path d="M7 12v6a2 2 0 0 0 4 0v-5"/></svg></span><h3>Publi&shy;cidade</h3><p>Campanhas que conectam a sua história ao momento certo, no on e no off-line.</p><ul><li>Campanhas</li><li>Lançamentos</li><li>Mídia</li></ul><span class="glare"></span></article>
+        <article class="svc rv"><span class="svc__n" aria-hidden="true">01</span><span class="svc__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg></span><h3>Design</h3><p>Marcas, peças e embalagens com cara própria, prontas para o feed, a vitrine e o outdoor.</p><ul><li>Logo</li><li>Identidade visual</li><li>Social media</li><li>Embalagem</li></ul></article>
+        <article class="svc rv"><span class="svc__n" aria-hidden="true">02</span><span class="svc__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M16 10l6-3v10l-6-3z"/></svg></span><h3>Audio&shy;visual</h3><p>Do roteiro à edição: filmes de marca, tours, cobertura de eventos e reels que prendem nos primeiros segundos.</p><ul><li>Reels</li><li>Drone</li><li>Institucional</li><li>Eventos</li></ul></article>
+        <article class="svc rv"><span class="svc__n" aria-hidden="true">03</span><span class="svc__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 6-6"/><path d="M15 8h5v5"/></svg></span><h3>Marketing</h3><p>Planejamento, calendário e gestão de redes com metas claras e relatório do que funcionou.</p><ul><li>Planejamento</li><li>Gestão de redes</li><li>Tráfego pago</li></ul></article>
+        <article class="svc rv"><span class="svc__n" aria-hidden="true">04</span><span class="svc__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 11l18-8v18L3 13z"/><path d="M7 12v6a2 2 0 0 0 4 0v-5"/></svg></span><h3>Publi&shy;cidade</h3><p>Campanhas que conectam a sua história ao momento certo, no on e no off-line.</p><ul><li>Campanhas</li><li>Lançamentos</li><li>Mídia</li></ul></article>
       </div>
     </div>
   </section>
@@ -654,7 +653,7 @@ a{color:inherit}
   var rvs = [].slice.call(document.querySelectorAll('.rv'));
   if (!reduce && 'IntersectionObserver' in window) {
     rvs.forEach(function(el){ if (el.getBoundingClientRect().top > innerHeight) el.classList.add('wait'); });
-    var io = new IntersectionObserver(function(es){ es.forEach(function(e){ if (e.isIntersecting){ e.target.classList.remove('wait'); io.unobserve(e.target); } }); }, { threshold: .15, rootMargin: '0px 0px -40px 0px' });
+    var io = new IntersectionObserver(function(es){ es.forEach(function(e){ if (e.isIntersecting){ var t = e.target; t.classList.remove('wait'); io.unobserve(t); setTimeout(function(){ t.style.transitionDelay = ''; }, 1400); } }); }, { threshold: .15, rootMargin: '0px 0px -40px 0px' });
     rvs.forEach(function(el, i){ if (el.classList.contains('wait')) { el.style.transitionDelay = ((i % 4) * 90) + 'ms'; io.observe(el); } });
   }
 
@@ -764,16 +763,6 @@ a{color:inherit}
     document.addEventListener('keydown', esc);
     lb.querySelector('.lb__close').focus();
   }
-
-  /* ===== Tilt 3D nos cards ===== */
-  if (fine && !reduce) document.querySelectorAll('.tilt').forEach(function(c){
-    c.addEventListener('pointermove', function(e){
-      var r = c.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
-      c.style.transform = 'rotateY(' + ((x - .5) * 16) + 'deg) rotateX(' + ((.5 - y) * 14) + 'deg) translateZ(10px)';
-      c.style.setProperty('--gx', (x * 100) + '%'); c.style.setProperty('--gy', (y * 100) + '%');
-    });
-    c.addEventListener('pointerleave', function(){ c.style.transform = ''; });
-  });
 
   /* ===== Esteiras 3D de clientes ===== */
   (function(){
