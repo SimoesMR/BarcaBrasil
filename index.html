@@ -200,7 +200,8 @@ a{color:inherit}
 
 /* Travessia */
 .trav{background:var(--mata-800)}
-.trav__track{height:320vh;position:relative}
+/* 210vh = a tela fixa + 110vh de rolagem (~27vh por etapa). Antes eram 320vh: o usuário ficava preso por mais de 2 telas. */
+.trav__track{height:210vh;position:relative}
 .trav__stage{position:sticky;top:0;height:100vh;height:100svh;min-height:32.5rem;display:flex;flex-direction:column;overflow:hidden}
 .trav__stage .wrap{width:100%;padding-top:calc(clamp(4.75rem,11vh,7.5rem) + env(safe-area-inset-top,0rem));position:relative;z-index:3;flex:none}
 .trav__title{font-size:clamp(3rem,min(7.8vw,11.5vh),7rem)}
@@ -211,7 +212,7 @@ a{color:inherit}
 .route{position:relative;list-style:none;margin:clamp(1.25rem,4vh,2.5rem) 0 0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem}
 .route::before,.route::after{content:"";position:absolute;left:0.75rem;right:calc(25% - 0.75rem);top:0.6875rem;height:0.125rem;border-radius:1rem}
 .route::before{background:repeating-linear-gradient(90deg,rgba(255,255,255,.35) 0 0.5rem,transparent 0.5rem 0.875rem)}
-.route::after{background:var(--farol);transform-origin:left;transform:scaleX(var(--prog));transition:transform .15s linear}
+.route::after{background:var(--farol);transform-origin:left;transform:scaleX(var(--prog));transition:transform .25s var(--ease)}
 .stop{position:relative;padding-top:2.25rem;min-width:0;opacity:.5;transition:opacity .45s}
 .stop.on{opacity:1}
 .stop__dot{position:absolute;left:0;top:0;width:1.5rem;height:1.5rem;border-radius:50%;background:var(--mata-800);box-shadow:inset 0 0 0 0.125rem rgba(255,255,255,.5);z-index:1;transition:background .4s,box-shadow .4s,transform .45s var(--ease)}
@@ -812,7 +813,7 @@ a{color:inherit}
   var header = $('#top'), hero = $('#inicio'), heroMtn = $('#hero-mtn'), track = $('#trav-track'), seaMtn = $('#sea-mtn');
   var routeEl = $('#steps'), steps = [].slice.call(document.querySelectorAll('#steps .stop')), legBox = $('#step-desc'), legN = $('#leg-n'), legT = $('#leg-t');
   var parts = [].slice.call(document.querySelectorAll('[data-part]')), pdots = [].slice.call(document.querySelectorAll('.dots a'));
-  var lastStep = 0;
+  var lastStep = 0, legTimer = 0;
   function frame(){
     var y = scrollY, H = innerHeight;
     header.classList.toggle('solid', y > 40);
@@ -822,13 +823,17 @@ a{color:inherit}
       words.forEach(function(w, i){ w.classList.toggle('on', i < n); });
       var tr = track.getBoundingClientRect(), t = clamp(-tr.top / (tr.height - H), 0, 1);
       seaMtn.style.transform = 'translate3d(' + (-t * 6) + '%,0,0)';
-      var idx = Math.min(steps.length - 1, Math.floor(t * steps.length * 0.999));
+      /* u: a linha da rota enche de 0 a 1 de forma contínua, com uma pequena folga no começo
+         (a seção acabou de travar) e no fim (o Destino fica aceso um instante antes de soltar). */
+      var u = clamp((t - 0.06) / 0.82, 0, 1), last = steps.length - 1;
+      routeEl.style.setProperty('--prog', u.toFixed(3));
+      /* cada parada acende exatamente quando a linha chega no ponto dela */
+      var idx = Math.min(last, Math.floor(u * last + 0.02));
       steps.forEach(function(s, i){ s.classList.toggle('on', i <= idx); s.classList.toggle('cur', i === idx); });
-      /* a linha da rota enche até a parada atual + o trecho percorrido rumo à próxima */
-      routeEl.style.setProperty('--prog', clamp(t * steps.length / (steps.length - 1), 0, 1).toFixed(3));
       if (idx !== lastStep) {
         lastStep = idx; legBox.classList.add('swap');
-        setTimeout(function(){
+        clearTimeout(legTimer); /* rolagem rápida: só a última etapa troca o texto, sem piscar */
+        legTimer = setTimeout(function(){
           legN.textContent = 'Etapa 0' + (idx + 1) + ' de 0' + steps.length;
           legT.innerHTML = '<strong>' + steps[idx].querySelector('b').textContent + '.</strong> ' + steps[idx].querySelector('.stop__txt').textContent;
           legBox.classList.remove('swap');
