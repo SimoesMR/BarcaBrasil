@@ -134,6 +134,16 @@ a{color:inherit}
 .stats{display:flex;flex-wrap:wrap;gap:1rem 3.5rem;margin-top:3.5rem}
 .stat b{display:block;font:400 clamp(3.5rem,7vw,5.5rem)/1 var(--font-display);font-variant-numeric:tabular-nums;color:var(--ink)}
 .stat span{font:400 1.125rem/1.25rem var(--font-display);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+@media (min-width:62rem){
+  /* Desktop: frase à esquerda, parágrafos e números à direita */
+  #manifesto .wrap{display:grid;grid-template-columns:1.2fr 1fr;grid-template-rows:auto auto 1fr;column-gap:clamp(3rem,6vw,5.5rem);align-items:start}
+  #manifesto .eyebrow{grid-column:1/-1}
+  #manifesto .manifesto__text{grid-column:1;grid-row:2/4}
+  #manifesto .manifesto__foot{grid-column:2;grid-row:2;grid-template-columns:1fr;gap:1.5rem;margin-top:.5rem;padding-left:2rem;border-left:0.125rem solid var(--line)}
+  #manifesto .stats{grid-column:2;grid-row:3;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.5rem;margin-top:2.75rem;padding-left:2rem}
+  #manifesto .stat b{font-size:clamp(3.25rem,4.6vw,4.5rem)}
+  #manifesto .stat span{display:block;margin-top:.375rem}
+}
 
 /* Vídeos: coverflow 3D */
 .videos{background:linear-gradient(var(--mata-700),var(--mata-800) 45%,var(--mata-800) 60%,var(--mata-700))}
