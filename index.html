@@ -248,8 +248,10 @@ a{color:inherit}
 
 .sea{position:relative;flex:1 1 auto;min-height:10.625rem}
 .sea__mtn{position:absolute;left:-5%;width:110%;bottom:clamp(1.875rem,6vh,3.75rem);opacity:.5;will-change:transform}
-@media (max-width:760px){ .sea__mtn{width:180%;left:-20%} }
-.sea__mtn img{width:100%;display:block}
+/* No celular as montanhas (que ficam na metade esquerda do desenho) ocupam a largura da tela, sem cortar a esquerda */
+@media (max-width:760px){ .sea__mtn{width:200%;left:0} }
+/* height:auto: sem isso o atributo height="352" da <img> vale e a foto fica espremida/esticada */
+.sea__mtn img{width:100%;height:auto;display:block}
 .sea__boat{position:absolute;left:0;bottom:clamp(3rem,8vh,5rem);z-index:2;will-change:transform;line-height:0}
 .sea__boat img{width:clamp(5rem,min(10vw,16vh),10.625rem);height:auto;filter:drop-shadow(0 0.625rem 1.125rem rgba(0,0,0,.6))}
 .sea__waves{position:absolute;left:0;right:0;bottom:0;height:clamp(4.375rem,12vh,8.125rem);z-index:3}
