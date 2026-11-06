@@ -210,7 +210,9 @@ a{color:inherit}
 .trav{background:var(--mata-800)}
 /* 210vh = a tela fixa + 110vh de rolagem (~27vh por etapa). Antes eram 320vh: o usuário ficava preso por mais de 2 telas. */
 .trav__track{height:210vh;position:relative}
-.trav__stage{position:sticky;top:0;height:100vh;height:100svh;min-height:32.5rem;display:flex;flex-direction:column;overflow:hidden}
+/* Conteúdo centralizado na altura da tela (antes ficava colado no topo e sobrava um buraco embaixo);
+   o padding de baixo reserva o espaço das ondas. */
+.trav__stage{position:sticky;top:0;height:100vh;height:100svh;min-height:32.5rem;display:flex;flex-direction:column;justify-content:center;padding-bottom:clamp(4.375rem,12vh,8.125rem);overflow:hidden}
 .trav__stage .wrap{width:100%;padding-top:calc(clamp(4.75rem,11vh,7.5rem) + env(safe-area-inset-top,0rem));position:relative;z-index:3;flex:none}
 .trav__title{font-size:clamp(3rem,min(7.8vw,11.5vh),5.5rem)}
 .trav__title em{font-style:normal;color:var(--green-hi)}
@@ -246,10 +248,11 @@ a{color:inherit}
 }
 @media (max-width:480px){ .route{gap:0.375rem} .stop__dot{width:1.25rem;height:1.25rem} .route::before,.route::after{top:0.5625rem;left:0.625rem;right:calc(25% - 0.625rem)} .trav__lead{display:none} }
 
-.sea{position:relative;flex:1 1 auto;min-height:10.625rem}
-.sea__mtn{position:absolute;left:-5%;width:110%;bottom:clamp(1.875rem,6vh,3.75rem);opacity:.5;will-change:transform}
+/* O mar virou uma camada de fundo da tela inteira: as montanhas ficam atrás dos textos */
+.sea{position:absolute;inset:0;z-index:1;pointer-events:none}
+.sea__mtn{position:absolute;left:-5%;width:110%;bottom:clamp(2.5rem,7vh,4.5rem);opacity:.16;will-change:transform}
 /* No celular as montanhas (que ficam na metade esquerda do desenho) ocupam a largura da tela, sem cortar a esquerda */
-@media (max-width:760px){ .sea__mtn{width:200%;left:0} }
+@media (max-width:760px){ .sea__mtn{width:300%;left:0} }
 /* height:auto: sem isso o atributo height="352" da <img> vale e a foto fica espremida/esticada */
 .sea__mtn img{width:100%;height:auto;display:block}
 .sea__boat{position:absolute;left:0;bottom:clamp(3rem,8vh,5rem);z-index:2;will-change:transform;line-height:0}
