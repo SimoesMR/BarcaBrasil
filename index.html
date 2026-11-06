@@ -23,7 +23,7 @@
   --bg:var(--mata-700); --bg-solid:var(--mata-800); --ink:#ffffff; --muted:#cfdccb; --line:rgba(255,255,255,.16); --line-strong:rgba(255,255,255,.22);
   --green:var(--mata-500); --green-hi:var(--farol); --ghost:rgba(255,255,255,.14);
   --btn-bg:var(--farol); --btn-ink:var(--tinta-fixa); --btn-hbg:#ffffff; --btn-hink:var(--tinta-fixa); --btn-line:rgba(255,255,255,.45);
-  --card-a:rgba(255,255,255,.08); --card-b:rgba(255,255,255,.03); --chip:rgba(255,255,255,.12); --chip-ink:#ffffff; --glare:rgba(255,255,255,.14);
+  --card-a:rgba(255,255,255,.08); --card-b:rgba(255,255,255,.03); --svc-dim:rgba(0,0,0,.3); --chip:rgba(255,255,255,.12); --chip-ink:#ffffff;
   --font-display:"Bebas Neue","Oswald","Arial Narrow",Impact,sans-serif;
   --font-sans:"Montserrat",system-ui,-apple-system,"Segoe UI",sans-serif;
   --ease:cubic-bezier(.22,.8,.24,1); --ease-io:cubic-bezier(.65,0,.35,1);
@@ -39,16 +39,15 @@
   --bg:var(--sand); --bg-solid:var(--sand); --ink:var(--tinta); --muted:var(--tinta-2); --line:var(--linha); --line-strong:var(--linha);
   --green:var(--mata-500); --green-hi:var(--brand-t); --ghost:var(--ghost-l);
   --btn-bg:var(--mata-500); --btn-ink:#ffffff; --btn-hbg:var(--mata-800); --btn-hink:#ffffff; --btn-line:var(--brand-t);
-  --card-a:var(--paper); --card-b:var(--paper); --chip:var(--sand-2); --chip-ink:var(--tinta); --glare:rgba(255,255,255,.5);
+  --card-a:var(--paper); --card-b:var(--paper); --svc-dim:rgba(23,34,26,.1); --chip:var(--sand-2); --chip-ink:var(--tinta);
   background:var(--bg); color:var(--ink);
 }
 .tone-dark{color:var(--ink)}
 *,*::before,*::after{box-sizing:border-box}
 html{font-size:16px;font-synthesis:none}
-@media (min-width:1600px){ html{font-size:18px} }
-@media (min-width:1920px){ html{font-size:20px} }
-@media (min-width:2560px){ html{font-size:26px} }
-@media (min-width:3400px){ html{font-size:34px} }
+/* A raiz fica em 16px até 2560px. Antes ela subia para 18px (1600px) e 20px (1920px), e como tudo é medido em rem o site inteiro crescia 12–25%: era o "zoom". Só telas muito grandes (TV/4K a 100%) ganham um reforço. */
+@media (min-width:2560px){ html{font-size:18px} }
+@media (min-width:3400px){ html{font-size:24px} }
 html{scroll-behavior:smooth;background:var(--sand)}
 body{background:var(--sand);color:var(--tinta);font:400 1rem/1.6875rem var(--font-sans);overflow-x:hidden;-webkit-font-smoothing:antialiased}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0rem);z-index:80;background:var(--mata-900)}
@@ -119,13 +118,13 @@ a{color:inherit}
 /* ---------- Partes ---------- */
 .parte{position:relative;padding-block:clamp(5rem,11vw,8.75rem)}
 .head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:1.5rem;margin-bottom:clamp(2.5rem,6vw,4.5rem)}
-.head__title{font-size:clamp(3.5rem,8.8vw,7.5rem)}
+.head__title{font-size:clamp(3.5rem,8.8vw,5.5rem)}
 .head__title em{font-style:normal;color:var(--green-hi);-webkit-text-stroke:0}
 .head__title .out{color:transparent;-webkit-text-stroke:0.125rem var(--ink)}
 .head__aside{max-width:23.75rem;margin:0;color:var(--muted)}
 
 /* Manifesto */
-.manifesto__text{font:400 clamp(2.625rem,6.6vw,5.75rem)/.98 var(--font-display);text-transform:uppercase;margin:0;max-width:15ch;text-wrap:balance}
+.manifesto__text{font:400 clamp(2.625rem,6.6vw,4.25rem)/.98 var(--font-display);text-transform:uppercase;margin:0;max-width:15ch;text-wrap:balance}
 .manifesto__text .w{color:var(--ghost);transition:color .3s}
 .manifesto__text .w.on{color:var(--ink)}
 .manifesto__text .w.hl.on{color:var(--green-hi)}
@@ -134,6 +133,16 @@ a{color:inherit}
 .stats{display:flex;flex-wrap:wrap;gap:1rem 3.5rem;margin-top:3.5rem}
 .stat b{display:block;font:400 clamp(3.5rem,7vw,5.5rem)/1 var(--font-display);font-variant-numeric:tabular-nums;color:var(--ink)}
 .stat span{font:400 1.125rem/1.25rem var(--font-display);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+@media (min-width:62rem){
+  /* Desktop: frase à esquerda, parágrafos e números à direita */
+  #manifesto .wrap{display:grid;grid-template-columns:1.2fr 1fr;grid-template-rows:auto auto 1fr;column-gap:clamp(3rem,6vw,5.5rem);align-items:start}
+  #manifesto .eyebrow{grid-column:1/-1}
+  #manifesto .manifesto__text{grid-column:1;grid-row:2/4}
+  #manifesto .manifesto__foot{grid-column:2;grid-row:2;grid-template-columns:1fr;gap:1.5rem;margin-top:.5rem;padding-left:2rem;border-left:0.125rem solid var(--line)}
+  #manifesto .stats{grid-column:2;grid-row:3;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.5rem;margin-top:2.75rem;padding-left:2rem}
+  #manifesto .stat b{font-size:clamp(3rem,4.6vw,3.75rem)}
+  #manifesto .stat span{display:block;margin-top:.375rem}
+}
 
 /* Vídeos: coverflow 3D */
 .videos{background:linear-gradient(var(--mata-700),var(--mata-800) 45%,var(--mata-800) 60%,var(--mata-700))}
@@ -182,12 +191,11 @@ a{color:inherit}
 .lb__close{position:absolute;top:calc(0.875rem + env(safe-area-inset-top,0rem));right:calc(0.875rem + env(safe-area-inset-right,0rem))}
 .lb__cap{position:absolute;left:var(--gl);bottom:calc(0.875rem + env(safe-area-inset-bottom,0rem));font:400 1rem/1.125rem var(--font-display);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 
-/* Serviços: cards com tilt */
+/* Serviços: cards com hover simples (escurece e aumenta) */
 .grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1.125rem;perspective:75rem}
 @media (max-width:1020px){ .grid4{grid-template-columns:repeat(2,minmax(0,1fr))} }
 @media (max-width:560px){ .grid4{grid-template-columns:1fr} }
-.tilt{position:relative;transform-style:preserve-3d;transition:transform .5s var(--ease);will-change:transform}
-.svc{min-height:23.75rem;border-radius:1.125rem;background:linear-gradient(160deg,var(--card-a),var(--card-b));border:0.0625rem solid var(--line);box-shadow:0 1.25rem 2.5rem rgba(23,34,26,.08);padding:1.75rem 1.625rem;display:flex;flex-direction:column;gap:0.875rem;overflow:hidden}
+.svc{position:relative;min-height:23.75rem;border-radius:1.125rem;background:linear-gradient(160deg,var(--card-a),var(--card-b));border:0.0625rem solid var(--line);box-shadow:0 1.25rem 2.5rem rgba(23,34,26,.08);padding:1.75rem 1.625rem;display:flex;flex-direction:column;gap:0.875rem;overflow:hidden}
 .svc__n{position:absolute;right:0.875rem;top:-6px;font:400 9.375rem/1 var(--font-display);color:transparent;-webkit-text-stroke:0.0625rem var(--line-strong);transform:translateZ(-30px);pointer-events:none}
 .svc__icon{width:3.375rem;height:3.375rem;border-radius:0.875rem;background:var(--green);display:grid;place-items:center;transform:translateZ(3.125rem);box-shadow:0 0.875rem 1.875rem rgba(71,117,76,.4)}
 .svc__icon svg{width:1.625rem;height:1.625rem;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -195,15 +203,18 @@ a{color:inherit}
 .svc p{margin:0;color:var(--muted);font-size:0.9375rem;line-height:1.5rem;transform:translateZ(1.5625rem)}
 .svc ul{list-style:none;margin:auto 0 0;padding:1rem 0 0;border-top:0.0625rem solid var(--line);display:flex;flex-wrap:wrap;gap:0.375rem;transform:translateZ(1.25rem)}
 .svc li{font:600 0.75rem/1.125rem var(--font-sans);padding:0.25rem 0.625rem;border-radius:62.4375rem;background:var(--chip);color:var(--chip-ink)}
-.glare{position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:radial-gradient(25rem circle at var(--gx,50%) var(--gy,0%),var(--glare),transparent 50%);opacity:0;transition:opacity .3s}
-.tilt:hover .glare{opacity:1}
+.grid4 .svc{transition:opacity 1s var(--ease),transform .35s var(--ease),box-shadow .35s var(--ease)}
+.grid4 .svc:hover{transform:scale(1.04);box-shadow:inset 0 0 0 100vmax var(--svc-dim),0 1.125rem 1.875rem rgba(23,34,26,.18)}
 
 /* Travessia */
 .trav{background:var(--mata-800)}
-.trav__track{height:320vh;position:relative}
-.trav__stage{position:sticky;top:0;height:100vh;height:100svh;min-height:32.5rem;display:flex;flex-direction:column;overflow:hidden}
+/* 210vh = a tela fixa + 110vh de rolagem (~27vh por etapa). Antes eram 320vh: o usuário ficava preso por mais de 2 telas. */
+.trav__track{height:210vh;position:relative}
+/* Conteúdo centralizado na altura da tela (antes ficava colado no topo e sobrava um buraco embaixo);
+   o padding de baixo reserva o espaço das ondas. */
+.trav__stage{position:sticky;top:0;height:100vh;height:100svh;min-height:32.5rem;display:flex;flex-direction:column;justify-content:center;padding-bottom:clamp(4.375rem,12vh,8.125rem);overflow:hidden}
 .trav__stage .wrap{width:100%;padding-top:calc(clamp(4.75rem,11vh,7.5rem) + env(safe-area-inset-top,0rem));position:relative;z-index:3;flex:none}
-.trav__title{font-size:clamp(3rem,min(7.8vw,11.5vh),7rem)}
+.trav__title{font-size:clamp(3rem,min(7.8vw,11.5vh),5.5rem)}
 .trav__title em{font-style:normal;color:var(--green-hi)}
 .trav__head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:0.75rem 2rem}
 .trav__lead{margin:0;max-width:26rem;font-size:clamp(0.9375rem,1.3vw,1.125rem);line-height:1.55;color:var(--muted)}
@@ -211,7 +222,7 @@ a{color:inherit}
 .route{position:relative;list-style:none;margin:clamp(1.25rem,4vh,2.5rem) 0 0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem}
 .route::before,.route::after{content:"";position:absolute;left:0.75rem;right:calc(25% - 0.75rem);top:0.6875rem;height:0.125rem;border-radius:1rem}
 .route::before{background:repeating-linear-gradient(90deg,rgba(255,255,255,.35) 0 0.5rem,transparent 0.5rem 0.875rem)}
-.route::after{background:var(--farol);transform-origin:left;transform:scaleX(var(--prog));transition:transform .15s linear}
+.route::after{background:var(--farol);transform-origin:left;transform:scaleX(var(--prog));transition:transform .25s var(--ease)}
 .stop{position:relative;padding-top:2.25rem;min-width:0;opacity:.5;transition:opacity .45s}
 .stop.on{opacity:1}
 .stop__dot{position:absolute;left:0;top:0;width:1.5rem;height:1.5rem;border-radius:50%;background:var(--mata-800);box-shadow:inset 0 0 0 0.125rem rgba(255,255,255,.5);z-index:1;transition:background .4s,box-shadow .4s,transform .45s var(--ease)}
@@ -237,10 +248,13 @@ a{color:inherit}
 }
 @media (max-width:480px){ .route{gap:0.375rem} .stop__dot{width:1.25rem;height:1.25rem} .route::before,.route::after{top:0.5625rem;left:0.625rem;right:calc(25% - 0.625rem)} .trav__lead{display:none} }
 
-.sea{position:relative;flex:1 1 auto;min-height:10.625rem}
-.sea__mtn{position:absolute;left:-5%;width:110%;bottom:clamp(1.875rem,6vh,3.75rem);opacity:.5;will-change:transform}
-@media (max-width:760px){ .sea__mtn{width:180%;left:-20%} }
-.sea__mtn img{width:100%;display:block}
+/* O mar virou uma camada de fundo da tela inteira: as montanhas ficam atrás dos textos */
+.sea{position:absolute;inset:0;z-index:1;pointer-events:none}
+.sea__mtn{position:absolute;left:-5%;width:110%;bottom:clamp(2.5rem,7vh,4.5rem);opacity:.16;will-change:transform}
+/* No celular as montanhas (que ficam na metade esquerda do desenho) ocupam a largura da tela, sem cortar a esquerda */
+@media (max-width:760px){ .sea__mtn{width:300%;left:0} }
+/* height:auto: sem isso o atributo height="352" da <img> vale e a foto fica espremida/esticada */
+.sea__mtn img{width:100%;height:auto;display:block}
 .sea__boat{position:absolute;left:0;bottom:clamp(3rem,8vh,5rem);z-index:2;will-change:transform;line-height:0}
 .sea__boat img{width:clamp(5rem,min(10vw,16vh),10.625rem);height:auto;filter:drop-shadow(0 0.625rem 1.125rem rgba(0,0,0,.6))}
 .sea__waves{position:absolute;left:0;right:0;bottom:0;height:clamp(4.375rem,12vh,8.125rem);z-index:3}
@@ -254,23 +268,42 @@ a{color:inherit}
 .belt-stage{position:relative;perspective:87.5rem;padding-block:1.5rem;-webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
 .belts{display:flex;flex-direction:column;gap:1.125rem;transform:rotateX(16deg) rotateY(-10deg) rotateZ(-3deg);transform-style:preserve-3d}
 .belt{overflow:visible;white-space:nowrap}
+/* As caixas das esteiras são invisíveis e estão no mesmo plano 3D dos logos: sem isso elas "roubam" o mouse de parte dos logos. Só o .tile recebe o ponteiro. */
+.belts,.belt,.belt__track{pointer-events:none}
 .belt__track{display:flex;gap:1.125rem;width:max-content;animation:belt var(--dur,50s) linear infinite;will-change:transform}
 .belt--rev .belt__track{animation-direction:reverse}
 .belt:hover .belt__track{animation-play-state:paused}
 @keyframes belt{from{transform:translate3d(0,0,0)}to{transform:translate3d(var(--shift,-50%),0,0)}}
-.tile{flex:none;width:13.75rem;height:8.25rem;border-radius:0.875rem;background:var(--paper);border:0.0625rem solid var(--line);display:block;overflow:hidden;padding:1.375rem 1.625rem;transition:transform .45s var(--ease),border-color .3s,background .3s,box-shadow .45s;box-shadow:0 0.5rem 0 var(--tile-sh)}
+/* .tile é a área de mouse (fica parada); só o .tile__card de dentro sobe. Assim o logo não "foge" do cursor. */
+.tile{flex:none;position:relative;width:13.75rem;height:8.25rem;pointer-events:auto}
+.tile:hover{z-index:2}
+.tile__card{width:100%;height:100%;border-radius:0.875rem;background:var(--paper);border:0.0625rem solid var(--line);overflow:hidden;padding:1.375rem 1.625rem;transition:transform .45s var(--ease),border-color .3s,box-shadow .45s;box-shadow:0 0.5rem 0 var(--tile-sh)}
 .tile img{display:block;width:100%;height:100%;object-fit:contain;object-position:center;filter:var(--logo-f);opacity:.9;transition:filter .3s,opacity .3s}
-.tile:hover{transform:translateY(-8px) scale(1.06);border-color:var(--green-hi);background:var(--paper);box-shadow:0 1.125rem 1.875rem rgba(23,34,26,.18),0 0 0 0.0625rem var(--green-hi)}
+.tile:hover .tile__card{transform:translateY(-8px) scale(1.06);border-color:var(--green-hi);box-shadow:0 1.125rem 1.875rem rgba(23,34,26,.18),0 0 0 0.0625rem var(--green-hi)}
 .tile:hover img{filter:var(--logo-fh);opacity:1}
+.clientes__acts{display:flex;flex-wrap:wrap;gap:0.75rem}
+/* Todas as marcas */
+.marcas{width:min(72rem,calc(100% - 2rem));max-height:min(88vh,60rem);padding:0;border:0.0625rem solid var(--line);border-radius:1.25rem;background:var(--bg-solid);color:var(--ink);box-shadow:0 1.875rem 5rem rgba(0,0,0,.45);overscroll-behavior:contain}
+.marcas::backdrop{background:rgba(15,26,18,.75);backdrop-filter:blur(0.375rem)}
+.marcas[open]{animation:marcas-in .4s var(--ease)}
+@keyframes marcas-in{from{opacity:0;transform:translateY(1.5rem) scale(.97)}to{opacity:1;transform:none}}
+.marcas__top{position:sticky;top:0;z-index:1;display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:1.25rem 1.5rem;background:var(--bg-solid);border-bottom:0.0625rem solid var(--line)}
+.marcas__top h3{margin:0;font:400 clamp(1.5rem,3vw,2rem)/1 var(--font-display);letter-spacing:.04em;text-transform:uppercase}
+.marcas__top .round{flex:none;width:2.75rem;height:2.75rem;border-color:var(--line-strong);background:transparent;color:var(--ink);font-size:1rem}
+.marcas__grid{list-style:none;margin:0;padding:1.5rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(10.5rem,1fr));gap:1rem}
+.marcas__grid li{display:flex;flex-direction:column;gap:0.5rem}
+.marcas__grid .tile{width:auto;height:7rem}
+.marcas__grid .tile__card{padding:1rem 1.25rem;box-shadow:0 0.375rem 0 var(--tile-sh)}
+.marcas__grid span{font-size:0.8125rem;line-height:1.3;color:var(--muted);text-align:center}
 .clientes__foot{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:1rem;margin-top:2rem;color:var(--muted);font-size:0.875rem}
-@media (max-width:640px){ .tile{width:10rem;height:6.25rem;padding:1rem 1.125rem} .belts{gap:0.75rem;transform:rotateX(12deg) rotateZ(-3deg)} .belt__track{gap:0.75rem} }
+@media (max-width:640px){ .tile{width:10rem;height:6.25rem} .tile__card{padding:1rem 1.125rem} .marcas__grid{grid-template-columns:repeat(2,1fr);padding:1rem;gap:0.75rem} .marcas__grid .tile{height:5.5rem} .marcas__top{padding:1rem} .belts{gap:0.75rem;transform:rotateX(12deg) rotateZ(-3deg)} .belt__track{gap:0.75rem} }
 
 /* Contato + cartão 3D */
 .contato{background:radial-gradient(90% 80% at 80% 20%, var(--mata-600) 0%, var(--mata-700) 60%)}
 .contato__grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(2.25rem,6vw,5.625rem);align-items:start}
 .contato__grid>*{min-width:0}
 @media (max-width:920px){ .contato__grid{grid-template-columns:1fr} }
-.contato__title{font-size:clamp(3.75rem,6.8vw,7rem)}
+.contato__title{font-size:clamp(3.75rem,6.8vw,5.5rem)}
 .contato__title em{font-style:normal;color:var(--green-hi)}
 .card3d{margin-top:2.5rem;width:min(100%,32.5rem);aspect-ratio:504/272;perspective:75rem;cursor:pointer}
 .card3d__in{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform 1s var(--ease)}
@@ -460,10 +493,10 @@ a{color:inherit}
         <p class="head__aside rv">Cada frente funciona sozinha e rende mais junto. Contrate uma ou embarque no pacote completo.</p>
       </div>
       <div class="grid4">
-        <article class="tilt svc rv"><span class="svc__n" aria-hidden="true">01</span><span class="svc__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg></span><h3>Design</h3><p>Marcas, peças e embalagens com cara própria, prontas para o feed, a vitrine e o outdoor.</p><ul><li>Logo</li><li>Identidade visual</li><li>Social media</li><li>Embalagem</li></ul><span class="glare"></span></article>
-        <article class="tilt svc rv"><span class="svc__n" aria-hidden="true">02</span><span class="svc__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M16 10l6-3v10l-6-3z"/></svg></span><h3>Audio&shy;visual</h3><p>Do roteiro à edição: filmes de marca, tours, cobertura de eventos e reels que prendem nos primeiros segundos.</p><ul><li>Reels</li><li>Drone</li><li>Institucional</li><li>Eventos</li></ul><span class="glare"></span></article>
-        <article class="tilt svc rv"><span class="svc__n" aria-hidden="true">03</span><span class="svc__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 6-6"/><path d="M15 8h5v5"/></svg></span><h3>Marketing</h3><p>Planejamento, calendário e gestão de redes com metas claras e relatório do que funcionou.</p><ul><li>Planejamento</li><li>Gestão de redes</li><li>Tráfego pago</li></ul><span class="glare"></span></article>
-        <article class="tilt svc rv"><span class="svc__n" aria-hidden="true">04</span><span class="svc__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 11l18-8v18L3 13z"/><path d="M7 12v6a2 2 0 0 0 4 0v-5"/></svg></span><h3>Publi&shy;cidade</h3><p>Campanhas que conectam a sua história ao momento certo, no on e no off-line.</p><ul><li>Campanhas</li><li>Lançamentos</li><li>Mídia</li></ul><span class="glare"></span></article>
+        <article class="svc rv"><span class="svc__n" aria-hidden="true">01</span><span class="svc__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg></span><h3>Design</h3><p>Marcas, peças e embalagens com cara própria, prontas para o feed, a vitrine e o outdoor.</p><ul><li>Logo</li><li>Identidade visual</li><li>Social media</li><li>Embalagem</li></ul></article>
+        <article class="svc rv"><span class="svc__n" aria-hidden="true">02</span><span class="svc__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M16 10l6-3v10l-6-3z"/></svg></span><h3>Audio&shy;visual</h3><p>Do roteiro à edição: filmes de marca, tours, cobertura de eventos e reels que prendem nos primeiros segundos.</p><ul><li>Reels</li><li>Drone</li><li>Institucional</li><li>Eventos</li></ul></article>
+        <article class="svc rv"><span class="svc__n" aria-hidden="true">03</span><span class="svc__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 6-6"/><path d="M15 8h5v5"/></svg></span><h3>Marketing</h3><p>Planejamento, calendário e gestão de redes com metas claras e relatório do que funcionou.</p><ul><li>Planejamento</li><li>Gestão de redes</li><li>Tráfego pago</li></ul></article>
+        <article class="svc rv"><span class="svc__n" aria-hidden="true">04</span><span class="svc__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 11l18-8v18L3 13z"/><path d="M7 12v6a2 2 0 0 0 4 0v-5"/></svg></span><h3>Publi&shy;cidade</h3><p>Campanhas que conectam a sua história ao momento certo, no on e no off-line.</p><ul><li>Campanhas</li><li>Lançamentos</li><li>Mídia</li></ul></article>
       </div>
     </div>
   </section>
@@ -479,8 +512,12 @@ a{color:inherit}
     <div class="belt-stage" aria-hidden="true"><div class="belts" id="belts"></div></div>
     <div class="wrap">
       <ul class="sr" id="client-list"></ul>
-      <div class="clientes__foot"><span id="client-count">35 marcas embarcadas</span><a class="btn btn--line btn--sm" href="#contato">Quero embarcar <span class="arr" aria-hidden="true">→</span></a></div>
+      <div class="clientes__foot"><span id="client-count">35 marcas embarcadas</span><div class="clientes__acts"><button class="btn btn--line btn--sm" type="button" id="marcas-open" aria-haspopup="dialog">Ver todas as marcas</button><a class="btn btn--line btn--sm" href="#contato">Quero embarcar <span class="arr" aria-hidden="true">→</span></a></div></div>
     </div>
+    <dialog class="marcas" id="marcas" aria-labelledby="marcas-title">
+      <div class="marcas__top"><h3 id="marcas-title">Todas as marcas embarcadas</h3><button class="round" type="button" id="marcas-close" aria-label="Fechar lista de marcas">✕</button></div>
+      <ul class="marcas__grid" id="marcas-grid"></ul>
+    </dialog>
   </section>
 
   <!-- Travessia -->
@@ -653,7 +690,7 @@ a{color:inherit}
   var rvs = [].slice.call(document.querySelectorAll('.rv'));
   if (!reduce && 'IntersectionObserver' in window) {
     rvs.forEach(function(el){ if (el.getBoundingClientRect().top > innerHeight) el.classList.add('wait'); });
-    var io = new IntersectionObserver(function(es){ es.forEach(function(e){ if (e.isIntersecting){ e.target.classList.remove('wait'); io.unobserve(e.target); } }); }, { threshold: .15, rootMargin: '0px 0px -40px 0px' });
+    var io = new IntersectionObserver(function(es){ es.forEach(function(e){ if (e.isIntersecting){ var t = e.target; t.classList.remove('wait'); io.unobserve(t); setTimeout(function(){ t.style.transitionDelay = ''; }, 1400); } }); }, { threshold: .15, rootMargin: '0px 0px -40px 0px' });
     rvs.forEach(function(el, i){ if (el.classList.contains('wait')) { el.style.transitionDelay = ((i % 4) * 90) + 'ms'; io.observe(el); } });
   }
 
@@ -764,24 +801,25 @@ a{color:inherit}
     lb.querySelector('.lb__close').focus();
   }
 
-  /* ===== Tilt 3D nos cards ===== */
-  if (fine && !reduce) document.querySelectorAll('.tilt').forEach(function(c){
-    c.addEventListener('pointermove', function(e){
-      var r = c.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
-      c.style.transform = 'rotateY(' + ((x - .5) * 16) + 'deg) rotateX(' + ((.5 - y) * 14) + 'deg) translateZ(10px)';
-      c.style.setProperty('--gx', (x * 100) + '%'); c.style.setProperty('--gy', (y * 100) + '%');
-    });
-    c.addEventListener('pointerleave', function(){ c.style.transform = ''; });
-  });
-
   /* ===== Esteiras 3D de clientes ===== */
   (function(){
     var box = $('#belts'), list = $('#client-list'), ROWS = 3, rows = [[],[],[]];
+    function tile(i){ return '<div class="tile"><div class="tile__card"><img src="clientes/' + (i + 1) + '.webp" alt="' + CLIENTS[i].replace(/"/g,'') + '" loading="lazy" decoding="async"></div></div>'; }
+    /* Todas as marcas: grade completa num <dialog> nativo (Esc e foco já vêm de graça) */
+    var dlg = $('#marcas'), opener = $('#marcas-open');
+    $('#marcas-grid').innerHTML = CLIENTS.map(function(name, i){ return '<li>' + tile(i) + '<span>' + name + '</span></li>'; }).join('');
+    $('#client-count').textContent = CLIENTS.length + ' marcas embarcadas';
+    if (dlg.showModal) {
+      opener.addEventListener('click', function(){ dlg.showModal(); document.documentElement.style.overflow = 'hidden'; });
+      $('#marcas-close').addEventListener('click', function(){ dlg.close(); });
+      dlg.addEventListener('click', function(e){ if (e.target === dlg) dlg.close(); }); /* clique fora fecha */
+      dlg.addEventListener('close', function(){ document.documentElement.style.overflow = ''; opener.focus({ preventScroll: true }); });
+    } else opener.hidden = true;
     CLIENTS.forEach(function(name, i){ rows[i % ROWS].push(i); var li = document.createElement('li'); li.textContent = name; list.appendChild(li); });
     var belts = rows.map(function(idx, r){
       var belt = document.createElement('div'); belt.className = 'belt' + (r % 2 ? ' belt--rev' : '');
       var track = document.createElement('div'); track.className = 'belt__track'; belt.appendChild(track); box.appendChild(belt);
-      var set = idx.map(function(i){ return '<div class="tile"><img src="clientes/' + (i + 1) + '.webp" alt="' + CLIENTS[i].replace(/"/g,'') + '" loading="lazy" decoding="async"></div>'; }).join('');
+      var set = idx.map(function(i){ return tile(i); }).join('');
       return { track: track, set: set, n: idx.length };
     });
     /* Repete o conjunto até cobrir 2x a largura da tela: a esteira nunca mostra buraco, do celular à TV. */
@@ -812,7 +850,7 @@ a{color:inherit}
   var header = $('#top'), hero = $('#inicio'), heroMtn = $('#hero-mtn'), track = $('#trav-track'), seaMtn = $('#sea-mtn');
   var routeEl = $('#steps'), steps = [].slice.call(document.querySelectorAll('#steps .stop')), legBox = $('#step-desc'), legN = $('#leg-n'), legT = $('#leg-t');
   var parts = [].slice.call(document.querySelectorAll('[data-part]')), pdots = [].slice.call(document.querySelectorAll('.dots a'));
-  var lastStep = 0;
+  var lastStep = 0, legTimer = 0;
   function frame(){
     var y = scrollY, H = innerHeight;
     header.classList.toggle('solid', y > 40);
@@ -822,13 +860,17 @@ a{color:inherit}
       words.forEach(function(w, i){ w.classList.toggle('on', i < n); });
       var tr = track.getBoundingClientRect(), t = clamp(-tr.top / (tr.height - H), 0, 1);
       seaMtn.style.transform = 'translate3d(' + (-t * 6) + '%,0,0)';
-      var idx = Math.min(steps.length - 1, Math.floor(t * steps.length * 0.999));
+      /* u: a linha da rota enche de 0 a 1 de forma contínua, com uma pequena folga no começo
+         (a seção acabou de travar) e no fim (o Destino fica aceso um instante antes de soltar). */
+      var u = clamp((t - 0.06) / 0.82, 0, 1), last = steps.length - 1;
+      routeEl.style.setProperty('--prog', u.toFixed(3));
+      /* cada parada acende exatamente quando a linha chega no ponto dela */
+      var idx = Math.min(last, Math.floor(u * last + 0.02));
       steps.forEach(function(s, i){ s.classList.toggle('on', i <= idx); s.classList.toggle('cur', i === idx); });
-      /* a linha da rota enche até a parada atual + o trecho percorrido rumo à próxima */
-      routeEl.style.setProperty('--prog', clamp(t * steps.length / (steps.length - 1), 0, 1).toFixed(3));
       if (idx !== lastStep) {
         lastStep = idx; legBox.classList.add('swap');
-        setTimeout(function(){
+        clearTimeout(legTimer); /* rolagem rápida: só a última etapa troca o texto, sem piscar */
+        legTimer = setTimeout(function(){
           legN.textContent = 'Etapa 0' + (idx + 1) + ' de 0' + steps.length;
           legT.innerHTML = '<strong>' + steps[idx].querySelector('b').textContent + '.</strong> ' + steps[idx].querySelector('.stop__txt').textContent;
           legBox.classList.remove('swap');
