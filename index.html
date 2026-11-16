@@ -144,7 +144,16 @@ a{color:inherit}
 .flow__stage{position:absolute;inset:0;transform-style:preserve-3d}
 .vcard{position:absolute;left:50%;top:50%;width:var(--cw);aspect-ratio:4/5;margin:0;transform-style:preserve-3d;transition:transform .7s var(--ease),filter .7s var(--ease),opacity .7s;border-radius:1rem;will-change:transform}
 .vcard__frame{position:absolute;inset:0;border-radius:1rem;overflow:hidden;background:#0f1a12;box-shadow:0 2.5rem 5rem rgba(0,0,0,.45),0 0 0 0.0625rem rgba(255,255,255,.08)}
-.vcard video,.vcard .poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
+.vcard .poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;transition:opacity .6s}
+/* hqdefault vem com faixas pretas: amplia para escondê-las */
+.vcard--hq .poster{transform:scale(1.35)}
+.vcard--short.vcard--hq .poster{transform:scale(2.4)}
+/* iframe do vídeo mudo, recortado para preencher o cartão 4:5 como um object-fit:cover */
+.vcard__live{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.vcard__live iframe{position:absolute;top:0;left:50%;height:100%;width:222.3%;translate:-50% 0;border:0;opacity:0;transition:opacity .6s}
+.vcard--short .vcard__live iframe{width:100%;height:111.2%;top:50%;left:0;translate:0 -50%}
+.vcard.playing .vcard__live iframe{opacity:1}
+.vcard.playing .poster{opacity:0}
 .vcard__shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 50%,rgba(10,18,12,.88));pointer-events:none}
 .vcard__cap{position:absolute;left:1.125rem;right:1.125rem;bottom:1rem;transform:translateZ(2.5rem);pointer-events:none}
 .vcard__cap small{display:block;font:400 0.9375rem/1rem var(--font-display);letter-spacing:.14em;text-transform:uppercase;color:var(--farol)}
@@ -160,11 +169,12 @@ a{color:inherit}
 .flow__meta{display:flex;align-items:center;justify-content:center;gap:clamp(1rem,3vw,1.75rem);margin-top:0.5rem}
 .flow__mid{display:flex;flex-direction:column;align-items:center;gap:0.625rem;min-width:7rem}
 .flow__count{font:400 1rem/1 var(--font-display);letter-spacing:.14em;color:var(--muted);font-variant-numeric:tabular-nums}
-.flow__dots{display:flex;gap:0.5rem}
-.flow__dots button{position:relative;width:0.625rem;height:0.625rem;padding:0;border-radius:62rem;border:0;background:rgba(255,255,255,.28);cursor:pointer;overflow:hidden;transition:width .45s var(--ease)}
-.flow__dots button.on{width:2.75rem}
-.flow__dots button i{position:absolute;inset:0;background:var(--farol);transform-origin:left;transform:scaleX(0)}
-.flow__dots button.on i{transform:scaleX(var(--p,0))}
+.flow__bar{position:relative;width:7rem;height:0.25rem;border-radius:62rem;background:rgba(255,255,255,.2);overflow:hidden}
+.flow__bar i{position:absolute;inset:0;background:var(--farol);transform-origin:left;transform:scaleX(var(--p,0));transition:transform .45s var(--ease)}
+.flow__tabs{display:flex;justify-content:center;gap:0.5rem;margin:0 0 clamp(0.5rem,2vw,1rem)}
+.flow__tabs button{font:400 1rem/1 var(--font-display);letter-spacing:.12em;text-transform:uppercase;padding:0.625rem 1.125rem;border-radius:62rem;border:0;background:rgba(255,255,255,.08);color:var(--muted);box-shadow:inset 0 0 0 0.0625rem rgba(255,255,255,.22);cursor:pointer;transition:background .25s,color .25s}
+.flow__tabs button:hover{color:#fff}
+.flow__tabs button[aria-pressed="true"]{background:var(--farol);color:var(--tinta-fixa);box-shadow:none}
 @media (max-width:700px){
   .flow{--cw:min(64vw,17.5rem)}
   .vcard__play{width:3.25rem;height:3.25rem;margin:-1.625rem 0 0 -1.625rem}
@@ -175,8 +185,10 @@ a{color:inherit}
 .round:hover{background:var(--farol);color:var(--tinta-fixa);border-color:var(--farol)}
 .lb{position:fixed;inset:0;z-index:100;background:rgba(15,26,18,.94);backdrop-filter:blur(0.5rem);display:grid;place-items:center;padding:calc(3.5rem + env(safe-area-inset-top,0rem)) var(--gr) calc(1.5rem + env(safe-area-inset-bottom,0rem)) var(--gl);opacity:0;transition:opacity .35s}
 .lb.open{opacity:1}
-.lb video{max-height:82vh;max-width:min(68.75rem,100%);width:auto;border-radius:0.75rem;box-shadow:0 1.875rem 5rem rgba(0,0,0,.7);transform:scale(.92) rotateX(10deg);transition:transform .5s var(--ease)}
-.lb.open video{transform:none}
+.lb__player{width:min(68.75rem,100%,calc(82vh * 16 / 9));aspect-ratio:16/9;border-radius:0.75rem;overflow:hidden;background:#000;box-shadow:0 1.875rem 5rem rgba(0,0,0,.7);transform:scale(.92) rotateX(10deg);transition:transform .5s var(--ease)}
+.lb--short .lb__player{width:min(100%,calc(82vh * 9 / 16));aspect-ratio:9/16}
+.lb__player iframe{width:100%;height:100%;border:0;display:block}
+.lb.open .lb__player{transform:none}
 .lb__close{position:absolute;top:calc(0.875rem + env(safe-area-inset-top,0rem));right:calc(0.875rem + env(safe-area-inset-right,0rem))}
 .lb__cap{position:absolute;left:var(--gl);bottom:calc(0.875rem + env(safe-area-inset-bottom,0rem));font:400 1rem/1.125rem var(--font-display);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 
@@ -459,13 +471,18 @@ a{color:inherit}
         <p class="head__aside rv">Filmes e reels que criamos para clientes. Arraste, use as setas ou toque no vídeo da frente para assistir com som.</p>
       </div>
     </div>
+    <div class="wrap">
+      <div class="flow__tabs" aria-label="Filtrar vídeos">
+        <button type="button" data-f="todos" aria-pressed="true">Todos</button><button type="button" data-f="filmes" aria-pressed="false">Filmes</button><button type="button" data-f="shorts" aria-pressed="false">Shorts</button>
+      </div>
+    </div>
     <div class="flow" id="flow" tabindex="0" aria-roledescription="carrossel" aria-label="Vídeos de clientes. Use as setas do teclado para trocar e Enter para assistir.">
       <div class="flow__stage" id="flow-stage"></div>
     </div>
     <div class="wrap">
       <div class="flow__meta">
         <button class="flow__arrow" type="button" id="flow-prev" aria-label="Vídeo anterior">←</button>
-        <div class="flow__mid"><span class="flow__count" id="flow-count">01 / 04</span><div class="flow__dots" id="flow-dots"></div></div>
+        <div class="flow__mid"><span class="flow__count" id="flow-count">01 / 41</span><div class="flow__bar" id="flow-bar" aria-hidden="true"><i></i></div></div>
         <button class="flow__arrow" type="button" id="flow-next" aria-label="Próximo vídeo">→</button>
       </div>
     </div>
@@ -599,13 +616,58 @@ a{color:inherit}
   var $ = function(s){ return document.querySelector(s); };
 
   /* ===== Dados ===== */
-  var VIDEOS = [
-    { id:'renaissance', client:'Renaissance Residencial Sênior', title:'Festa de fim de ano', kind:'Filme', dur:'1:13' },
-    { id:'sweet-emma',  client:'Sweet Emma Confeitaria',          title:'Pão de mel',          kind:'Reels', dur:'0:18' },
-    { id:'ornamentali', client:'Ornamentali Casa',                title:'Tour pela loja',      kind:'Filme', dur:'0:24' },
-    { id:'eufloria',    client:'Eufloria Boutique',               title:'Mesa de Natal',       kind:'Reels', dur:'0:30' },
-    { id:'turrini',     client:'Turrini',                         title:'Casa no Paineiras',   kind:'Filme', dur:'0:57' }
+  /* Vídeos do canal youtube.com/@abarcabrasil: [id, título no YouTube, duração]. Shorts não têm duração na página do canal. */
+  var YT_FILMES = [
+    ["F4Amt4dnQi0", "Institucional Residem", "3:51"],
+    ["-m5Ggk13RrU", "Mansano - Lago Sul 9 milhões", "0:36"],
+    ["ITEfl4BCnOE", "Livtá - Sênior Living", "2:23"],
+    ["4fPdlbW3bk4", "Leandro Pinheiro - Spazio Verde", "1:38"],
+    ["14-hBJJowHs", "Clinica Renaissance Livtá - Carnaval", "1:14"],
+    ["JqwS1U8Z3ZQ", "Clinica Renaissance Livtá - Ano Novo", "0:44"],
+    ["RSzeXVh0Du0", "Residem - Tour casa Solar Primavera", "4:17"],
+    ["Rq4DDCYBo2I", "Mansano - Vídeo Institucional", "1:06"],
+    ["Pl2j7Tu1ZoE", "Leandro Pinheiro - Drone casa Vila de León", "2:14"],
+    ["PsMa757G7f4", "Leandro Pinheiro - Casa Spazio Verde", "0:25"],
+    ["x9izf-uRPu0", "Ornamentali - Tour Drone", "4:21"],
+    ["orOxJg-H7o8", "Livtá Institucional", "1:28"],
+    ["XYqWMX8bCa4", "Institucional Gecon", ""]
   ];
+  var YT_SHORTS = [
+    ["oEOlKLmJZ8Q", "Conecta Brokers  Jardim Santa Maria"],
+    ["Y5UlilMJJFk", "Residem casa Jd. Europa"],
+    ["mKoVbNcGW9o", "Casa Shangrilá"],
+    ["pJJb49sfrjg", "Residem - Colombe d'or"],
+    ["VRH9XjmjkiI", "Ornamentali Casa - ambientes da loja"],
+    ["f5yy41Q2mwg", "Livtá Sênior Living"],
+    ["kSM2L5_nEAE", "Renaissance Livtá"],
+    ["gHQpuSQ7UJQ", "Livtá Sênior Living"],
+    ["jaGbxxdxuAs", "Eufloria"],
+    ["hHyOE0jwf4E", "Residem  casa Primavera Piratininga"],
+    ["pP8w1W-WX_4", "Conecta Brokers - Harmonis"],
+    ["DB2F8yaWFh4", "Dani Cardoso - Desafio com aulo"],
+    ["FiWpqdAPXVs", "Dani Cardoso - gravidade"],
+    ["wtTHCzrlriM", "Dani Cardoso pilates"],
+    ["m1yzQ0vIyiw", "Sweet Emma - Pão de mel"],
+    ["W2cdENX8luw", "Conecta Brokers  - Val de Palmas Mira"],
+    ["IAd9KLtltw8", "Sweet Emma - bombom"],
+    ["KZMvM_0egwA", "Sweet Emma - Casadinho"],
+    ["N-Dksk-WG2k", "Sweet Emma Bauru"],
+    ["PafMzN47q4M", "Thereza Pizza Grill"],
+    ["4YwVAuq-S9A", "Conecta Brokers - Harmonis"],
+    ["xE3_va3HAs4", "Dani Cardoso Pilates"],
+    ["te1DACIk7TA", "Locmaster Bauru - ASMR"],
+    ["K6kYLmFV1CQ", "Ornamentali Casa"],
+    ["Ilrv_Asr_lQ", "Ornamentali - Sofá verde"],
+    ["F3Xgl3hc6Zw", "Ornamentali - Sofá"],
+    ["QNN7Ti0ksdE", "Leandro Pinheiro - Aimar Móveis"],
+    ["Or4u-DFl5m8", "Leandro Pinheiro no Covadonga Stable"]
+  ];
+  /* "Cliente - Título" vira cliente + título; espaços duplos do YouTube são normalizados */
+  function ytItem(r, short){
+    var full = r[1].replace(/\s+/g, ' ').trim(), m = full.split(/\s+-\s+/), client = m.length > 1 ? m.shift() : '', title = m.join(' - ');
+    return { id: r[0], title: title, client: client, short: short, kind: short ? 'Short' : 'Filme', dur: r[2] || '' };
+  }
+  var VIDEOS = YT_FILMES.map(function(r){ return ytItem(r, false); }).concat(YT_SHORTS.map(function(r){ return ytItem(r, true); }));
   var CLIENTS = ['Daniele Cardoso','Sweet Emma Confeitaria','Thereza Pizza & Grill','Ornamentali Casa','Livtá Sênior Living','BeOne','Residem Operações Imobiliárias','Boltdesk','ONSolutions','OAB Bauru','Cidades Econômicas','Dedetizaki','Leandro Pinheiro Empreendimentos','Viva Riviera','O Boticário','Instituto Florir','TKM Engenharia','Marcel Cabete','Tristão Corretora de Seguros','Lex Monitora','Leroy Merlin','Conveniência Avenida','Marca parceira','Incluindo com Excelência','GECON','Conecta Broker’s','Renaissance Residencial Sênior','Marcos Mira Corretor de Imóveis','Vitta Corpus','Mansano Negócios Imobiliários','Eufloria Boutique','Atacadista Foco','Yasmin Justo','Espaço Kinesis','Locmaster'];
 
   /* ===== Hero: oceano de partículas (three.js) ===== */
@@ -684,52 +746,85 @@ a{color:inherit}
   mt.innerHTML = mt.textContent.split(' ').map(function(w){ return '<span class="w' + (hl[w] ? ' hl' : '') + '">' + w + '</span>'; }).join(' ');
   var words = [].slice.call(mt.querySelectorAll('.w'));
 
-  /* ===== Vídeos: coverflow 3D =====
-     O carrossel acompanha o dedo/mouse em tempo real (pos fracionária), avança
-     sozinho quando o vídeo da frente termina e mostra o progresso no ponto ativo. */
-  var stage = $('#flow-stage'), flow = $('#flow'), dotsBox = $('#flow-dots'), count = $('#flow-count'), N = VIDEOS.length, cur = 0, cards = [];
-  VIDEOS.forEach(function(v, i){
-    var fig = document.createElement('figure'); fig.className = 'vcard';
-    fig.innerHTML = '<div class="vcard__frame"><img class="poster" src="media/' + v.id + '.jpg" alt=""><video muted playsinline preload="none" poster="media/' + v.id + '.jpg" src="media/' + v.id + '.mp4"></video><div class="vcard__shade"></div></div>' +
-      '<figcaption class="vcard__cap"><small>' + v.kind + ' · ' + v.dur + '</small><b>' + v.title + '</b><span>' + v.client + '</span></figcaption>' +
-      '<button class="vcard__play" type="button" tabindex="-1" aria-label="Assistir ' + v.title + ' com som"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l14 8-14 8z"/></svg></button>';
-    fig.addEventListener('click', function(){ if (moved) return; if (i === cur) openLB(i); else go(i); });
-    var vid = fig.querySelector('video');
-    vid.addEventListener('timeupdate', function(){ if (i === cur && vid.duration) dots[i].style.setProperty('--p', (vid.currentTime / vid.duration).toFixed(3)); });
-    vid.addEventListener('ended', function(){ if (i === cur && !document.querySelector('.lb')) go(cur + 1); });
-    stage.appendChild(fig); cards.push(fig);
-    var d = document.createElement('button'); d.type = 'button'; d.setAttribute('aria-label', 'Ver ' + v.title); d.innerHTML = '<i></i>';
-    d.addEventListener('click', function(){ go(i); }); dotsBox.appendChild(d);
-  });
-  var dots = [].slice.call(dotsBox.children), inView = true;
+  /* ===== Vídeos: coverflow 3D com os vídeos do YouTube =====
+     Cada cartão mostra só a thumbnail do YouTube (leve). O vídeo da frente toca sozinho, mudo e
+     em loop, num iframe que só é criado para ele. Clicar abre o player grande, com som.
+     O carrossel acompanha o dedo/mouse em tempo real (pos fracionária). */
+  var stage = $('#flow-stage'), flow = $('#flow'), count = $('#flow-count'), bar = $('#flow-bar'), tabs = [].slice.call(document.querySelectorAll('.flow__tabs button'));
+  var list = VIDEOS, N = 0, cur = 0, cards = [], inView = false, liveTimer = 0;
+  var YT = 'https://www.youtube-nocookie.com/embed/';
+  function thumb(v){ return 'https://i.ytimg.com/vi/' + v.id + '/' + (v.short ? 'oardefault.jpg' : 'maxresdefault.jpg'); }
+  function build(){
+    stage.innerHTML = ''; cards = []; N = list.length; cur = 0;
+    list.forEach(function(v, i){
+      var fig = document.createElement('figure'); fig.className = 'vcard' + (v.short ? ' vcard--short' : '');
+      fig.innerHTML = '<div class="vcard__frame"><img class="poster" alt="" decoding="async"><div class="vcard__live"></div><div class="vcard__shade"></div></div>' +
+        '<figcaption class="vcard__cap"><small>' + v.kind + (v.dur ? ' · ' + v.dur : '') + '</small><b>' + v.title + '</b>' + (v.client ? '<span>' + v.client + '</span>' : '') + '</figcaption>' +
+        '<button class="vcard__play" type="button" tabindex="-1" aria-label="Assistir ' + v.title.replace(/"/g, '') + ' com som"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l14 8-14 8z"/></svg></button>';
+      var img = fig.querySelector('img');
+      /* maxres/oar nem sempre existem (o YouTube devolve uma imagem cinza de 120px): cai para hqdefault, que tem faixas pretas, e amplia para escondê-las */
+      img.addEventListener('load', function(){ if (img.naturalWidth <= 120 && !img.dataset.fb) fallback(); });
+      img.addEventListener('error', function(){ if (!img.dataset.fb) fallback(); });
+      function fallback(){ img.dataset.fb = 1; fig.classList.add('vcard--hq'); img.src = 'https://i.ytimg.com/vi/' + v.id + '/hqdefault.jpg'; }
+      fig.addEventListener('click', function(){ if (moved) return; if (i === cur) openLB(i); else go(i); });
+      stage.appendChild(fig); cards.push(fig);
+    });
+    layout();
+  }
   function remPx(){ return parseFloat(getComputedStyle(document.documentElement).fontSize) / 16; }
   function wrapOff(off){ while (off > N / 2) off -= N; while (off < -N / 2) off += N; return off; }
+  function gapPx(){ var w = flow.clientWidth, cw = cards[0].offsetWidth; return w < 700 ? cw * 0.62 : Math.min(cw * 1.08, w * 0.3); }
   function layout(drag){
-    var w = flow.clientWidth, rem = remPx(), cw = cards[0].offsetWidth;
-    var gap = w < 700 ? cw * 0.62 : Math.min(cw * 1.08, w * 0.3);
-    var pos = cur + (drag || 0);
+    if (!N) return;
+    var w = flow.clientWidth, rem = remPx(), gap = gapPx(), pos = cur + (drag || 0);
     cards.forEach(function(c, i){
       var off = wrapOff(i - pos), a = Math.abs(off);
+      /* só carrega a thumbnail dos cartões perto da frente */
+      if (a < 3.5) { var img = c.querySelector('img'); if (!img.getAttribute('src')) img.src = thumb(list[i]); }
+      c.style.visibility = a > 2.6 ? 'hidden' : '';
       var tz = -Math.min(a, 2) * (w < 700 ? 140 : 200) * rem;
       c.style.transform = 'translate(-50%,-50%) translateX(' + (off * gap).toFixed(1) + 'px) translateZ(' + tz.toFixed(1) + 'px) rotateY(' + (clamp(-off, -1.6, 1.6) * 34).toFixed(2) + 'deg)';
-      c.style.zIndex = String(10 - Math.round(a * 2));
+      c.style.zIndex = String(100 - Math.round(a * 2));
       c.style.filter = 'brightness(' + (1 - Math.min(a, 1) * .45).toFixed(2) + ')';
       c.style.opacity = a > 1.6 ? String(Math.max(0, 1 - (a - 1.6) * 1.5)) : '1';
     });
     if (drag) return;
-    cards.forEach(function(c, i){
-      var on = i === cur, vid = c.querySelector('video');
-      c.classList.toggle('active', on); c.setAttribute('aria-hidden', on ? 'false' : 'true');
-      if (on && inView && !reduce) { vid.preload = 'auto'; var p = vid.play(); if (p && p.catch) p.catch(function(){}); }
-      else { vid.pause(); if (!on) { vid.currentTime = 0; } }
-    });
-    dots.forEach(function(d, i){ d.classList.toggle('on', i === cur); if (i !== cur) d.style.setProperty('--p', 0); });
+    cards.forEach(function(c, i){ var on = i === cur; c.classList.toggle('active', on); c.setAttribute('aria-hidden', on ? 'false' : 'true'); });
     count.textContent = String(cur + 1).padStart(2, '0') + ' / ' + String(N).padStart(2, '0');
+    bar.style.setProperty('--p', ((cur + 1) / N).toFixed(3));
+    live();
+  }
+  /* Vídeo da frente tocando mudo: espera o carrossel parar um instante antes de criar o iframe,
+     para não carregar um player a cada clique rápido nas setas. */
+  function live(){
+    clearTimeout(liveTimer);
+    var off = !inView || reduce || !!document.querySelector('.lb'); /* fora da tela ou com o player grande aberto: nada toca no carrossel */
+    cards.forEach(function(c, i){ if (i !== cur || off) { var l = c.querySelector('.vcard__live'); if (l.firstChild) { l.innerHTML = ''; c.classList.remove('playing'); } } });
+    if (off) return;
+    var c = cards[cur], v = list[cur], box = c.querySelector('.vcard__live');
+    if (box.firstChild) return;
+    liveTimer = setTimeout(function(){
+      var f = document.createElement('iframe');
+      f.src = YT + v.id + '?autoplay=1&mute=1&controls=0&loop=1&playlist=' + v.id + '&playsinline=1&rel=0&modestbranding=1&iv_load_policy=3&disablekb=1';
+      f.allow = 'autoplay; encrypted-media; picture-in-picture'; f.tabIndex = -1; f.title = v.title; f.setAttribute('aria-hidden', 'true');
+      /* a thumbnail só some quando o vídeo já começou (o player do YouTube abre com uma tela preta) */
+      f.addEventListener('load', function(){ setTimeout(function(){ if (box.firstChild === f) c.classList.add('playing'); }, 900); });
+      box.appendChild(f);
+    }, 650);
   }
   function go(i){ cur = ((i % N) + N) % N; layout(); }
   $('#flow-prev').addEventListener('click', function(e){ e.stopPropagation(); go(cur - 1); });
   $('#flow-next').addEventListener('click', function(e){ e.stopPropagation(); go(cur + 1); });
   flow.addEventListener('keydown', function(e){ if (e.key === 'ArrowLeft') { e.preventDefault(); go(cur - 1); } if (e.key === 'ArrowRight') { e.preventDefault(); go(cur + 1); } if (e.key === 'Enter') openLB(cur); });
+  /* Filtro: Todos / Filmes / Shorts */
+  tabs.forEach(function(t){
+    t.addEventListener('click', function(){
+      tabs.forEach(function(o){ o.setAttribute('aria-pressed', o === t ? 'true' : 'false'); });
+      var f = t.dataset.f;
+      list = VIDEOS.filter(function(v){ return f === 'todos' || (f === 'shorts') === v.short; });
+      build();
+    });
+  });
 
   /* Arrastar: o carrossel segue o ponteiro; solta e encaixa no mais próximo (com impulso). */
   var sx = 0, sy = 0, lx = 0, lt = 0, vel = 0, moved = false, dragging = false, axis = '';
@@ -743,16 +838,11 @@ a{color:inherit}
     if (axis !== 'x') return;
     moved = true; flow.classList.add('drag');
     var now = performance.now(); vel = (e.clientX - lx) / Math.max(1, now - lt); lx = e.clientX; lt = now;
-    var gap = flow.clientWidth < 700 ? cards[0].offsetWidth * 0.62 : Math.min(cards[0].offsetWidth * 1.08, flow.clientWidth * 0.3);
-    layout(-dx / gap);
+    layout(-dx / gapPx());
   });
   window.addEventListener('pointerup', function(e){
     if (!dragging) return; dragging = false; flow.classList.remove('drag');
-    if (axis === 'x') {
-      var gap = flow.clientWidth < 700 ? cards[0].offsetWidth * 0.62 : Math.min(cards[0].offsetWidth * 1.08, flow.clientWidth * 0.3);
-      var steps = -(e.clientX - sx) / gap - vel * 3;
-      go(cur + Math.round(clamp(steps, -2, 2)));
-    }
+    if (axis === 'x') go(cur + Math.round(clamp(-(e.clientX - sx) / gapPx() - vel * 3, -2, 2)));
     setTimeout(function(){ moved = false; }, 0);
   });
   window.addEventListener('pointercancel', function(){ if (dragging) { dragging = false; flow.classList.remove('drag'); layout(); } });
@@ -763,22 +853,18 @@ a{color:inherit}
     e.preventDefault(); var now = Date.now(); if (now - wheelLock < 450) return; wheelLock = now; go(cur + (e.deltaX > 0 ? 1 : -1));
   }, { passive: false });
   window.addEventListener('resize', function(){ layout(); });
-  layout();
-  /* pausa o vídeo da frente fora da tela */
-  if ('IntersectionObserver' in window) new IntersectionObserver(function(es){ inView = es[0].isIntersecting; layout(); }, { threshold: .25 }).observe(flow);
+  build();
+  /* só toca enquanto o carrossel está na tela */
+  if ('IntersectionObserver' in window) new IntersectionObserver(function(es){ inView = es[0].isIntersecting; live(); }, { threshold: .25 }).observe(flow);
 
-  /* Lightbox */
+  /* Player grande, com som (o clique do usuário libera o autoplay com áudio) */
   function openLB(i){
     if (document.querySelector('.lb')) return; /* um player por vez */
-    var v = VIDEOS[i], lb = document.createElement('div'), cardVid = cards[i].querySelector('video'), startAt = cardVid.currentTime || 0;
-    cardVid.pause();
-    lb.className = 'lb'; lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-modal', 'true'); lb.setAttribute('aria-label', v.title + ' — ' + v.client);
-    lb.innerHTML = '<video controls autoplay playsinline src="media/' + v.id + '.mp4" poster="media/' + v.id + '.jpg"></video><button class="round lb__close" type="button" aria-label="Fechar vídeo">✕</button><span class="lb__cap">' + v.client + ' · ' + v.title + '</span>';
-    document.body.appendChild(lb); requestAnimationFrame(function(){ lb.classList.add('open'); });
-    var lv = lb.querySelector('video');
-    /* continua de onde o vídeo do card estava, agora com som */
-    if (startAt > 0.5) lv.addEventListener('loadedmetadata', function(){ if (startAt < lv.duration - 1) lv.currentTime = startAt; }, { once: true });
-    var close = function(){ lb.classList.remove('open'); lv.pause(); var t = lv.currentTime; if (t && t < (lv.duration || 1e9) - 0.5) cardVid.currentTime = t; setTimeout(function(){ lb.remove(); layout(); flow.focus({ preventScroll: true }); }, 300); document.removeEventListener('keydown', esc); };
+    var v = list[i], lb = document.createElement('div');
+    lb.className = 'lb' + (v.short ? ' lb--short' : ''); lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-modal', 'true'); lb.setAttribute('aria-label', v.title + (v.client ? ' — ' + v.client : ''));
+    lb.innerHTML = '<div class="lb__player"><iframe src="' + YT + v.id + '?autoplay=1&rel=0&modestbranding=1&playsinline=1" title="' + v.title.replace(/"/g, '') + '" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe></div><button class="round lb__close" type="button" aria-label="Fechar vídeo">✕</button><span class="lb__cap">' + (v.client ? v.client + ' · ' : '') + v.title + '</span>';
+    document.body.appendChild(lb); live(); requestAnimationFrame(function(){ lb.classList.add('open'); });
+    var close = function(){ lb.classList.remove('open'); document.removeEventListener('keydown', esc); setTimeout(function(){ lb.remove(); live(); flow.focus({ preventScroll: true }); }, 300); };
     var esc = function(e){ if (e.key === 'Escape') close(); };
     lb.querySelector('.lb__close').addEventListener('click', close);
     lb.addEventListener('click', function(e){ if (e.target === lb) close(); });
