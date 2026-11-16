@@ -99,17 +99,19 @@ a{color:inherit}
 .logo3d .ghost{position:absolute;inset:0;opacity:.18;transform:translateZ(-60px) scale(1.06);filter:blur(0.125rem) drop-shadow(0 0 1.875rem var(--green))}
 @keyframes boia{0%,100%{translate:0 0}50%{translate:0 -10px}}
 .intro{animation:chega 1.4s var(--ease) both}
-/* Abertura: o teaser cobre a tela; a chegada do logo do topo só começa quando ele termina */
-html.teasing{overflow:hidden}
+/* Abertura: o teaser é a primeira seção. Ele fica parado (sticky) enquanto o hero sobe por cima,
+   e o vídeo escurece e some conforme a rolagem. A chegada do logo só começa quando o hero aparece. */
 html.teasing .intro{animation-play-state:paused}
-.teaser{position:fixed;inset:0;z-index:200;background:#0b120d;display:grid;place-items:center;transition:opacity .9s var(--ease),visibility .9s}
-.teaser.out{opacity:0;visibility:hidden}
-.teaser video{width:100%;height:100%;object-fit:cover;display:block}
-.teaser__ui{position:absolute;right:calc(1rem + env(safe-area-inset-right,0rem));bottom:calc(1.25rem + env(safe-area-inset-bottom,0rem));display:flex;gap:0.625rem}
-.teaser__ui button{font:400 1rem/1 var(--font-display);letter-spacing:.12em;text-transform:uppercase;padding:0.75rem 1.125rem;border-radius:62rem;border:0;cursor:pointer;background:rgba(11,18,13,.55);color:#fff;box-shadow:inset 0 0 0 0.0625rem rgba(255,255,255,.45);backdrop-filter:blur(0.375rem);transition:background .2s,color .2s}
-.teaser__ui button:hover{background:var(--farol);color:var(--tinta-fixa);box-shadow:none}
-.teaser__bar{position:absolute;left:0;right:0;bottom:0;height:0.1875rem;background:rgba(255,255,255,.15)}
-.teaser__bar i{position:absolute;inset:0;background:var(--farol);transform-origin:left;transform:scaleX(var(--p,0))}
+.abertura{position:relative}
+.teaser{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;background:#0b120d;z-index:0}
+.teaser__media{position:absolute;inset:0;will-change:opacity,transform}
+/* o teaser tem faixas pretas (letterbox) no próprio arquivo: amplia 14% para escondê-las */
+.teaser video{width:100%;height:100%;object-fit:cover;display:block;transform:scale(1.14)}
+.teaser__shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,18,13,.35),rgba(11,18,13,0) 25%,rgba(11,18,13,0) 70%,rgba(11,18,13,.6))}
+.teaser__sound{position:absolute;right:calc(1rem + env(safe-area-inset-right,0rem));bottom:calc(1.5rem + env(safe-area-inset-bottom,0rem));z-index:2;font:400 1rem/1 var(--font-display);letter-spacing:.12em;text-transform:uppercase;padding:0.75rem 1.125rem;border-radius:62rem;border:0;cursor:pointer;background:rgba(11,18,13,.55);color:#fff;box-shadow:inset 0 0 0 0.0625rem rgba(255,255,255,.45);backdrop-filter:blur(0.375rem);transition:background .2s,color .2s}
+.teaser__sound:hover{background:var(--farol);color:var(--tinta-fixa);box-shadow:none}
+.teaser .scrollcue{color:#fff}
+.abertura .hero{z-index:1;box-shadow:0 -1.5rem 3rem rgba(0,0,0,.45)}
 @keyframes chega{from{opacity:0;transform:translateY(2.5rem) rotateX(25deg)}to{opacity:1;transform:none}}
 .hero__services{display:flex;flex-wrap:wrap;justify-content:center;gap:0.5rem 1.375rem;margin:0;padding:0;list-style:none;font:400 1.375rem/1.5rem var(--font-display);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
 .hero__services li+li::before{content:"";display:inline-block;width:0.375rem;height:0.375rem;border-radius:50%;background:var(--farol);margin-right:1.375rem;vertical-align:0.125rem}
@@ -320,7 +322,7 @@ html.teasing .intro{animation-play-state:paused}
 .contato__title{font-size:clamp(3.75rem,6.8vw,5.5rem)}
 .contato__title em{font-style:normal;color:var(--green-hi)}
 /* Contato: o mesmo logo do topo, sem o cartão */
-.contato__logo{width:min(20rem,70%);margin:2.5rem 0 0}
+.contato__logo{width:min(13.5rem,55%);margin:2rem 0 0.5rem}
 .info{display:flex;flex-direction:column;gap:0.875rem;margin-top:1.75rem}
 .info__row{display:flex;flex-wrap:wrap;align-items:center;gap:0.625rem 0.875rem}
 .info__row .lbl{font:400 1rem/1rem var(--font-display);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);width:6rem}
@@ -396,41 +398,9 @@ html.teasing .intro{animation-play-state:paused}
   .belts{transform:none}
 }
 </style>
+<script>document.documentElement.classList.add('teasing');</script>
 </head>
 <body>
-<!-- Abertura: teaser em tela cheia; ao terminar (ou em "Pular") revela o logo do topo -->
-<div class="teaser" id="teaser" role="dialog" aria-label="Teaser da Barca Brasil" hidden>
-  <video id="teaser-v" muted playsinline preload="auto" poster="media/intro/teaser-poster.jpg"></video>
-  <div class="teaser__ui"><button type="button" id="teaser-sound">Ativar som</button><button type="button" id="teaser-skip">Pular →</button></div>
-  <div class="teaser__bar" aria-hidden="true"><i id="teaser-bar"></i></div>
-</div>
-<script>
-/* Roda antes do resto da página para o vídeo começar o quanto antes.
-   Aparece uma vez por sessão do navegador (?teaser na URL força); quem prefere menos movimento não vê. */
-(function(){
-  var box = document.getElementById('teaser'), v = document.getElementById('teaser-v'), root = document.documentElement, seen = false;
-  try { seen = sessionStorage.getItem('barca-teaser') === '1' && !/[?&]teaser\b/.test(location.search); } catch(e) {}
-  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (seen || reduce) { box.remove(); return; }
-  box.hidden = false; root.classList.add('teasing');
-  v.src = 'media/intro/teaser-' + (Math.max(screen.width, screen.height) * (window.devicePixelRatio || 1) > 1600 && innerWidth > 900 ? '1080' : '720') + '.mp4';
-  var done = false;
-  function end(){
-    if (done) return; done = true;
-    try { sessionStorage.setItem('barca-teaser', '1'); } catch(e) {}
-    root.classList.remove('teasing'); box.classList.add('out');
-    setTimeout(function(){ v.pause(); v.removeAttribute('src'); v.load(); box.remove(); }, 950);
-  }
-  window.barcaTeaserEnd = end;
-  var p = v.play(); if (p && p.catch) p.catch(end); /* autoplay bloqueado: vai direto para o site */
-  v.addEventListener('ended', end); v.addEventListener('error', end);
-  v.addEventListener('timeupdate', function(){ if (v.duration) document.getElementById('teaser-bar').style.transform = 'scaleX(' + (v.currentTime / v.duration).toFixed(3) + ')'; });
-  document.getElementById('teaser-skip').addEventListener('click', end);
-  var snd = document.getElementById('teaser-sound');
-  snd.addEventListener('click', function(){ v.muted = !v.muted; snd.textContent = v.muted ? 'Ativar som' : 'Sem som'; if (v.paused) v.play(); });
-  document.addEventListener('keydown', function k(e){ if (e.key === 'Escape') { end(); document.removeEventListener('keydown', k); } });
-})();
-</script>
 
 
 <div class="grain" aria-hidden="true"></div>
@@ -463,6 +433,13 @@ html.teasing .intro{animation-play-state:paused}
 </ol>
 
 <main>
+  <div class="abertura">
+  <!-- Teaser: primeira seção; ao rolar, o vídeo some e o hero (logo) sobe por cima -->
+  <section class="teaser" id="teaser" aria-label="Teaser da Barca Brasil">
+    <div class="teaser__media" id="teaser-media"><video id="teaser-v" muted loop playsinline preload="auto" poster="media/intro/teaser-poster.jpg"></video><div class="teaser__shade"></div></div>
+    <button class="teaser__sound" type="button" id="teaser-sound">Ativar som</button>
+    <div class="scrollcue" aria-hidden="true">Role<span></span></div>
+  </section>
   <!-- Hero: oceano 3D -->
   <section class="hero tone-dark" id="inicio" data-part data-tone="dark" data-label="Início">
     <canvas id="ocean" aria-hidden="true"></canvas>
@@ -481,6 +458,7 @@ html.teasing .intro{animation-play-state:paused}
     </div>
     <div class="scrollcue" aria-hidden="true">Role<span></span></div>
   </section>
+  </div>
 
   <!-- Manifesto -->
   <section class="parte tone-light" id="manifesto" data-part data-tone="light" data-label="A Barca">
@@ -938,6 +916,27 @@ html.teasing .intro{animation-play-state:paused}
     var rt; window.addEventListener('resize', function(){ clearTimeout(rt); rt = setTimeout(build, 200); });
   })();
 
+  /* ===== Teaser (primeira seção) =====
+     Toca mudo e em loop; conforme a página desce, escurece, cresce um pouco e some.
+     Pausa quando sai da tela e volta a tocar quando a pessoa sobe de novo. */
+  (function(){
+    var sec = $('#teaser'), media = $('#teaser-media'), v = $('#teaser-v'), snd = $('#teaser-sound'), root = document.documentElement;
+    v.src = 'media/intro/teaser-' + (Math.max(screen.width, screen.height) * (window.devicePixelRatio || 1) > 1600 && innerWidth > 900 ? '1080' : '720') + '.mp4';
+    function play(){ if (reduce) return; var p = v.play(); if (p && p.catch) p.catch(function(){}); }
+    play();
+    snd.addEventListener('click', function(){ v.muted = !v.muted; snd.textContent = v.muted ? 'Ativar som' : 'Sem som'; play(); });
+    var playing = true;
+    function upd(){
+      var k = clamp(scrollY / Math.max(1, sec.offsetHeight), 0, 1);
+      if (!reduce) { media.style.opacity = (1 - k * 0.85).toFixed(3); media.style.transform = 'scale(' + (1 + k * 0.08).toFixed(3) + ')'; }
+      /* o logo do hero começa a chegar quando ele já cobriu um terço da tela */
+      if (k > 0.33) root.classList.remove('teasing');
+      if (k >= 1 && playing) { v.pause(); playing = false; }
+      else if (k < 1 && !playing) { playing = true; play(); }
+    }
+    window.addEventListener('scroll', upd, { passive: true }); upd();
+  })();
+
   /* ===== Scroll: header, parallax, manifesto, travessia, pontos ===== */
   var header = $('#top'), hero = $('#inicio'), heroMtn = $('#hero-mtn'), track = $('#trav-track'), seaMtn = $('#sea-mtn');
   var routeEl = $('#steps'), steps = [].slice.call(document.querySelectorAll('#steps .stop'));
@@ -991,7 +990,7 @@ html.teasing .intro{animation-play-state:paused}
     var y = scrollY, H = innerHeight;
     header.classList.toggle('solid', y > 40);
     if (!reduce) {
-      heroMtn.style.transform = 'translate3d(0,' + (y * 0.25) + 'px,0)';
+      heroMtn.style.transform = 'translate3d(0,' + (Math.max(0, y - hero.offsetTop) * 0.25) + 'px,0)';
       var r = mt.getBoundingClientRect(), p = clamp((H * 0.85 - r.top) / (r.height + H * 0.35), 0, 1), n = Math.round(p * words.length);
       words.forEach(function(w, i){ w.classList.toggle('on', i < n); });
       var tr = track.getBoundingClientRect(), t = clamp(-tr.top / (tr.height - H), 0, 1);
@@ -1025,10 +1024,10 @@ html.teasing .intro{animation-play-state:paused}
       /* no topo o barco espera atracado: só zarpa depois que os botões do hero saem da faixa de baixo da tela */
       var heroEl = secs[0], cta = heroEl.querySelector('.hero__ctas');
       var ctaLow = cta ? cta.getBoundingClientRect().bottom > innerHeight - vb.offsetHeight * 1.8 : false;
-      vy.classList.toggle('away', scrollY < heroEl.offsetHeight * 0.3 || ctaLow);
+      vy.classList.toggle('away', scrollY < heroEl.offsetTop + heroEl.offsetHeight * 0.3 || ctaLow);
       var s = secs[i], p = clamp((mid - s.offsetTop) / s.offsetHeight, 0, 1);
       /* no hero a viagem começa na borda esquerda e chega à direita quando a próxima seção assume */
-      if (i === 0) p = clamp(scrollY / Math.max(1, s.offsetHeight - innerHeight * 0.5), 0, 1);
+      if (i === 0) p = clamp((scrollY - s.offsetTop) / Math.max(1, s.offsetHeight - innerHeight * 0.5), 0, 1);
       var t = i % 2 ? 1 - p : p;
       target = (W - bw - 2 * 12) * t + 12;
       if (s.dataset.label !== lastLabel) { lastLabel = s.dataset.label; vt.textContent = lastLabel; }
