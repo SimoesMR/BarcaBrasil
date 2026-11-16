@@ -64,11 +64,14 @@ a{color:inherit}
 
 /* ---------- Header ---------- */
 .top{color:#fff;position:fixed;top:env(safe-area-inset-top,0rem);left:0;right:0;z-index:60;transition:background .35s,backdrop-filter .35s,transform .45s var(--ease)}
-.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding-block:0.75rem}
+/* cabeçalho em 3 colunas: barco à esquerda, menus no centro, botão à direita */
+.top .wrap{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:1rem;padding-block:0.75rem}
 .top.solid{background:rgba(22,36,26,.9);backdrop-filter:blur(0.625rem);box-shadow:0 0.0625rem 0 var(--line)}
 .top__logo{display:block;line-height:0}
-.top__logo img{height:2.875rem;width:auto}
-.top nav{display:flex;align-items:center;gap:1.625rem}
+.top__logo svg{height:2.5rem;width:auto;fill:#5e9b63;transition:fill .25s,transform .35s var(--ease)}
+.top__logo:hover svg{fill:var(--farol);transform:rotate(-6deg)}
+.top__cta{justify-self:end}
+.top nav{display:flex;align-items:center;justify-content:center;gap:clamp(1.25rem,2.6vw,2.25rem)}
 .top nav a.lnk{text-decoration:none;font:500 0.875rem/1.25rem var(--font-sans);color:#cfdccb;transition:color .2s}
 .top nav a.lnk:hover{color:#fff}
 @media (max-width:860px){ .top nav a.lnk{display:none} }
@@ -96,6 +99,17 @@ a{color:inherit}
 .logo3d .ghost{position:absolute;inset:0;opacity:.18;transform:translateZ(-60px) scale(1.06);filter:blur(0.125rem) drop-shadow(0 0 1.875rem var(--green))}
 @keyframes boia{0%,100%{translate:0 0}50%{translate:0 -10px}}
 .intro{animation:chega 1.4s var(--ease) both}
+/* Abertura: o teaser cobre a tela; a chegada do logo do topo só começa quando ele termina */
+html.teasing{overflow:hidden}
+html.teasing .intro{animation-play-state:paused}
+.teaser{position:fixed;inset:0;z-index:200;background:#0b120d;display:grid;place-items:center;transition:opacity .9s var(--ease),visibility .9s}
+.teaser.out{opacity:0;visibility:hidden}
+.teaser video{width:100%;height:100%;object-fit:cover;display:block}
+.teaser__ui{position:absolute;right:calc(1rem + env(safe-area-inset-right,0rem));bottom:calc(1.25rem + env(safe-area-inset-bottom,0rem));display:flex;gap:0.625rem}
+.teaser__ui button{font:400 1rem/1 var(--font-display);letter-spacing:.12em;text-transform:uppercase;padding:0.75rem 1.125rem;border-radius:62rem;border:0;cursor:pointer;background:rgba(11,18,13,.55);color:#fff;box-shadow:inset 0 0 0 0.0625rem rgba(255,255,255,.45);backdrop-filter:blur(0.375rem);transition:background .2s,color .2s}
+.teaser__ui button:hover{background:var(--farol);color:var(--tinta-fixa);box-shadow:none}
+.teaser__bar{position:absolute;left:0;right:0;bottom:0;height:0.1875rem;background:rgba(255,255,255,.15)}
+.teaser__bar i{position:absolute;inset:0;background:var(--farol);transform-origin:left;transform:scaleX(var(--p,0))}
 @keyframes chega{from{opacity:0;transform:translateY(2.5rem) rotateX(25deg)}to{opacity:1;transform:none}}
 .hero__services{display:flex;flex-wrap:wrap;justify-content:center;gap:0.5rem 1.375rem;margin:0;padding:0;list-style:none;font:400 1.375rem/1.5rem var(--font-display);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
 .hero__services li+li::before{content:"";display:inline-block;width:0.375rem;height:0.375rem;border-radius:50%;background:var(--farol);margin-right:1.375rem;vertical-align:0.125rem}
@@ -305,19 +319,8 @@ a{color:inherit}
 @media (max-width:920px){ .contato__grid{grid-template-columns:1fr} }
 .contato__title{font-size:clamp(3.75rem,6.8vw,5.5rem)}
 .contato__title em{font-style:normal;color:var(--green-hi)}
-.card3d{margin-top:2.5rem;width:min(100%,32.5rem);aspect-ratio:504/272;perspective:75rem;cursor:pointer}
-.card3d__in{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform 1s var(--ease)}
-.card3d.flip .card3d__in{transform:rotateY(180deg)}
-.card3d__face{position:absolute;inset:0;border-radius:0.875rem;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;box-shadow:0 1.875rem 3.75rem rgba(0,0,0,.55),0 0 0 0.0625rem rgba(255,255,255,.07)}
-.card3d__front{background:#131313;display:grid;place-items:center}
-.card3d__front .m{position:absolute;left:0;right:0;bottom:0;opacity:.9}
-.card3d__front .l{position:relative;width:34%;margin-top:-8%}
-.card3d__back{background:#f4f4f1;color:#131313;transform:rotateY(180deg);display:flex;flex-direction:column;justify-content:center;gap:0.625rem;padding:6% 7%}
-.card3d__back .row{display:flex;align-items:center;gap:0.75rem;font:600 clamp(0.75rem,1.7vw,0.9375rem)/1.3 var(--font-sans);overflow-wrap:anywhere}
-.card3d__back .ic{flex:none;width:1.625rem;height:1.625rem;border-radius:50%;background:var(--green);display:grid;place-items:center}
-.card3d__back .ic svg{width:0.8125rem;height:0.8125rem;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
-.card3d__back img{position:absolute;right:6%;top:9%;width:13%}
-.card3d__hint{margin:0.75rem 0 0;font-size:0.8125rem;color:var(--muted)}
+/* Contato: o mesmo logo do topo, sem o cartão */
+.contato__logo{width:min(20rem,70%);margin:2.5rem 0 0}
 .info{display:flex;flex-direction:column;gap:0.875rem;margin-top:1.75rem}
 .info__row{display:flex;flex-wrap:wrap;align-items:center;gap:0.625rem 0.875rem}
 .info__row .lbl{font:400 1rem/1rem var(--font-display);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);width:6rem}
@@ -395,20 +398,53 @@ a{color:inherit}
 </style>
 </head>
 <body>
+<!-- Abertura: teaser em tela cheia; ao terminar (ou em "Pular") revela o logo do topo -->
+<div class="teaser" id="teaser" role="dialog" aria-label="Teaser da Barca Brasil" hidden>
+  <video id="teaser-v" muted playsinline preload="auto" poster="media/intro/teaser-poster.jpg"></video>
+  <div class="teaser__ui"><button type="button" id="teaser-sound">Ativar som</button><button type="button" id="teaser-skip">Pular →</button></div>
+  <div class="teaser__bar" aria-hidden="true"><i id="teaser-bar"></i></div>
+</div>
+<script>
+/* Roda antes do resto da página para o vídeo começar o quanto antes.
+   Aparece uma vez por sessão do navegador (?teaser na URL força); quem prefere menos movimento não vê. */
+(function(){
+  var box = document.getElementById('teaser'), v = document.getElementById('teaser-v'), root = document.documentElement, seen = false;
+  try { seen = sessionStorage.getItem('barca-teaser') === '1' && !/[?&]teaser\b/.test(location.search); } catch(e) {}
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (seen || reduce) { box.remove(); return; }
+  box.hidden = false; root.classList.add('teasing');
+  v.src = 'media/intro/teaser-' + (Math.max(screen.width, screen.height) * (window.devicePixelRatio || 1) > 1600 && innerWidth > 900 ? '1080' : '720') + '.mp4';
+  var done = false;
+  function end(){
+    if (done) return; done = true;
+    try { sessionStorage.setItem('barca-teaser', '1'); } catch(e) {}
+    root.classList.remove('teasing'); box.classList.add('out');
+    setTimeout(function(){ v.pause(); v.removeAttribute('src'); v.load(); box.remove(); }, 950);
+  }
+  window.barcaTeaserEnd = end;
+  var p = v.play(); if (p && p.catch) p.catch(end); /* autoplay bloqueado: vai direto para o site */
+  v.addEventListener('ended', end); v.addEventListener('error', end);
+  v.addEventListener('timeupdate', function(){ if (v.duration) document.getElementById('teaser-bar').style.transform = 'scaleX(' + (v.currentTime / v.duration).toFixed(3) + ')'; });
+  document.getElementById('teaser-skip').addEventListener('click', end);
+  var snd = document.getElementById('teaser-sound');
+  snd.addEventListener('click', function(){ v.muted = !v.muted; snd.textContent = v.muted ? 'Ativar som' : 'Sem som'; if (v.paused) v.play(); });
+  document.addEventListener('keydown', function k(e){ if (e.key === 'Escape') { end(); document.removeEventListener('keydown', k); } });
+})();
+</script>
 
 
 <div class="grain" aria-hidden="true"></div>
 
 <header class="top" id="top">
   <div class="wrap">
-    <a class="top__logo" href="#inicio" aria-label="A Barca Brasil — início"><img src="barca-mark.svg" alt="Barca" width="62" height="50"></a>
+    <a class="top__logo" href="#inicio" aria-label="A Barca Brasil — início"><svg viewBox="832 196 212 182" aria-hidden="true"><path d="M 851.308594 323.824219 C 853.269531 311.347656 903.242188 221.199219 903.242188 221.199219 L 955.175781 323.824219 Z M 851.308594 323.824219 "/><path d="M 927.289062 323.824219 C 929.609375 309.066406 988.722656 202.425781 988.722656 202.425781 L 1037.878906 325.90625 Z M 927.289062 323.824219 "/><path d="M 837.742188 338.1875 L 862.121094 372.066406 L 1020.585938 372.066406 L 1037.878906 332.449219 Z M 837.742188 338.1875 "/></svg></a>
     <nav aria-label="Principal">
       <a class="lnk" href="#videos">Trabalhos</a>
       <a class="lnk" href="#servicos">Serviços</a>
       <a class="lnk" href="#clientes">Clientes</a>
       <a class="lnk" href="#travessia">Embarque conosco</a>
-      <a class="btn btn--green btn--sm" href="#contato">Embarcar <span class="arr" aria-hidden="true">→</span></a>
     </nav>
+    <a class="btn btn--green btn--sm top__cta" href="#contato">Embarcar <span class="arr" aria-hidden="true">→</span></a>
   </div>
 </header>
 
@@ -456,7 +492,7 @@ a{color:inherit}
         <p class="rv">Começamos entendendo o seu negócio e o seu cliente. Depois escolhemos a rota: o formato, o canal e a mensagem que fazem a sua marca ser lembrada e vender mais.</p>
       </div>
       <div class="stats">
-        <div class="stat rv"><b data-count="35">35</b><span>Marcas a bordo</span></div>
+        <div class="stat rv"><b data-count="36">36</b><span>Marcas a bordo</span></div>
         <div class="stat rv"><b data-count="4">4</b><span>Frentes de trabalho</span></div>
         <div class="stat rv"><b>1</b><span>Barco, do roteiro ao resultado</span></div>
       </div>
@@ -515,7 +551,7 @@ a{color:inherit}
     <div class="belt-stage" aria-hidden="true"><div class="belts" id="belts"></div></div>
     <div class="wrap">
       <ul class="sr" id="client-list"></ul>
-      <div class="clientes__foot"><span id="client-count">35 marcas embarcadas</span><div class="clientes__acts"><button class="btn btn--line btn--sm" type="button" id="marcas-open" aria-haspopup="dialog">Ver todas as marcas</button><a class="btn btn--line btn--sm" href="#contato">Quero embarcar <span class="arr" aria-hidden="true">→</span></a></div></div>
+      <div class="clientes__foot"><span id="client-count">36 marcas embarcadas</span><div class="clientes__acts"><button class="btn btn--line btn--sm" type="button" id="marcas-open" aria-haspopup="dialog">Ver todas as marcas</button><a class="btn btn--line btn--sm" href="#contato">Quero embarcar <span class="arr" aria-hidden="true">→</span></a></div></div>
     </div>
     <dialog class="marcas" id="marcas" aria-labelledby="marcas-title">
       <div class="marcas__top"><h3 id="marcas-title">Todas as marcas embarcadas</h3><button class="round" type="button" id="marcas-close" aria-label="Fechar lista de marcas">✕</button></div>
@@ -559,19 +595,10 @@ a{color:inherit}
       <div>
         <p class="eyebrow">Contato</p>
         <h2 class="display contato__title">Bora<br><em>embarcar?</em></h2>
-        <div class="card3d" id="card3d" role="button" tabindex="0" aria-label="Virar o cartão da Barca">
-          <div class="card3d__in">
-            <div class="card3d__face card3d__front"><img class="m" src="mountains.webp" alt=""><img class="l" src="barca-logo.svg" alt="Barca Brasil"></div>
-            <div class="card3d__face card3d__back">
-              <img src="barca-mark.svg" alt="">
-              <div class="row"><span class="ic"><svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></span>14 99700-4586</div>
-              <div class="row"><span class="ic"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.5 6.5h0"/></svg></span>abarcabrasil</div>
-              <div class="row"><span class="ic"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 6l-10 7L2 6"/></svg></span>embarca@barcapublicidade.com.br</div>
-              <div class="row"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg></span>barcapublicidade.com.br</div>
-            </div>
-          </div>
+        <div class="logo3d contato__logo" aria-hidden="true">
+          <img class="ghost" src="barca-logo.svg" alt="">
+          <img src="barca-logo.svg" alt="" width="640" height="600" loading="lazy">
         </div>
-        <p class="card3d__hint">Toque no cartão para virar.</p>
         <div class="info">
           <div class="info__row"><span class="lbl">WhatsApp</span><span class="val" id="fone">(14) 99700-4586</span><button class="copy" type="button" data-copy="fone">Copiar</button></div>
           <div class="info__row"><span class="lbl">E-mail</span><span class="val" id="mail">embarca@barcapublicidade.com.br</span><button class="copy" type="button" data-copy="mail">Copiar</button></div>
@@ -668,7 +695,7 @@ a{color:inherit}
     return { id: r[0], title: title, client: client, short: short, kind: short ? 'Short' : 'Filme', dur: r[2] || '' };
   }
   var VIDEOS = YT_FILMES.map(function(r){ return ytItem(r, false); }).concat(YT_SHORTS.map(function(r){ return ytItem(r, true); }));
-  var CLIENTS = ['Daniele Cardoso','Sweet Emma Confeitaria','Thereza Pizza & Grill','Ornamentali Casa','Livtá Sênior Living','BeOne','Residem Operações Imobiliárias','Boltdesk','ONSolutions','OAB Bauru','Cidades Econômicas','Dedetizaki','Leandro Pinheiro Empreendimentos','Viva Riviera','O Boticário','Instituto Florir','TKM Engenharia','Marcel Cabete','Tristão Corretora de Seguros','Lex Monitora','Leroy Merlin','Conveniência Avenida','Marca parceira','Incluindo com Excelência','GECON','Conecta Broker’s','Renaissance Residencial Sênior','Marcos Mira Corretor de Imóveis','Vitta Corpus','Mansano Negócios Imobiliários','Eufloria Boutique','Atacadista Foco','Yasmin Justo','Espaço Kinesis','Locmaster'];
+  var CLIENTS = ['Daniele Cardoso','Sweet Emma Confeitaria','Thereza Pizza & Grill','Ornamentali Casa','Livtá Sênior Living','BeOne','Residem Operações Imobiliárias','Boltdesk','ONSolutions','OAB Bauru','Cidades Econômicas','Dedetizaki','Leandro Pinheiro Empreendimentos','Viva Riviera','O Boticário','Instituto Florir','TKM Engenharia','Marcel Cabete','Tristão Corretora de Seguros','Lex Monitora','Leroy Merlin','Conveniência Avenida','Marca parceira','Incluindo com Excelência','GECON','Conecta Broker’s','Renaissance Residencial Sênior','Marcos Mira Corretor de Imóveis','Vitta Corpus','Mansano Negócios Imobiliários','Eufloria Boutique','Atacadista Foco','Yasmin Justo','Espaço Kinesis','Locmaster','Turrini Imóveis'];
 
   /* ===== Hero: oceano de partículas (three.js) ===== */
   (function(){
@@ -910,12 +937,6 @@ a{color:inherit}
     build();
     var rt; window.addEventListener('resize', function(){ clearTimeout(rt); rt = setTimeout(build, 200); });
   })();
-
-  /* ===== Cartão 3D ===== */
-  var card = $('#card3d');
-  function flip(){ card.classList.toggle('flip'); }
-  card.addEventListener('click', flip);
-  card.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flip(); } });
 
   /* ===== Scroll: header, parallax, manifesto, travessia, pontos ===== */
   var header = $('#top'), hero = $('#inicio'), heroMtn = $('#hero-mtn'), track = $('#trav-track'), seaMtn = $('#sea-mtn');
