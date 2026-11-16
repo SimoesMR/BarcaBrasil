@@ -207,21 +207,35 @@ a{color:inherit}
 .trav__title em{font-style:normal;color:var(--green-hi)}
 .trav__head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:0.75rem 2rem}
 .trav__lead{margin:0;max-width:26rem;font-size:clamp(0.9375rem,1.3vw,1.125rem);line-height:1.55;color:var(--muted)}
-/* Rota: 4 paradas ligadas por uma linha que enche com a rolagem */
-.route{position:relative;list-style:none;margin:clamp(1.25rem,4vh,2.5rem) 0 0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem}
-.route::before,.route::after{content:"";position:absolute;left:0.75rem;right:calc(25% - 0.75rem);top:0.6875rem;height:0.125rem;border-radius:1rem}
-.route::before{background:repeating-linear-gradient(90deg,rgba(255,255,255,.35) 0 0.5rem,transparent 0.5rem 0.875rem)}
-.route::after{background:var(--farol);transform-origin:left;transform:scaleX(var(--prog));transition:transform .25s var(--ease)}
-.stop{position:relative;padding-top:2.25rem;min-width:0;opacity:.5;transition:opacity .45s}
-.stop.on{opacity:1}
-.stop__dot{position:absolute;left:0;top:0;width:1.5rem;height:1.5rem;border-radius:50%;background:var(--mata-800);box-shadow:inset 0 0 0 0.125rem rgba(255,255,255,.5);z-index:1;transition:background .4s,box-shadow .4s,transform .45s var(--ease)}
-.stop.on .stop__dot{background:var(--farol);box-shadow:0 0 0 0.375rem rgba(233,185,73,.22)}
-.stop.cur .stop__dot{transform:scale(1.25)}
-.stop::before{content:attr(data-n);position:absolute;left:1.875rem;top:0.0625rem;z-index:1;padding:0 0.375rem;background:var(--mata-800);font:400 1rem/1.375rem var(--font-display);letter-spacing:.12em;color:var(--muted)}
+/* Rota em zigue-zague: 4 cartões alternando esquerda/direita, ligados por curvas que se desenham com a rolagem.
+   As curvas são um SVG desenhado pelo JS a partir da posição real dos cartões (layoutRoute). */
+.route{position:relative;list-style:none;margin:clamp(1.25rem,4vh,2.5rem) 0 0;padding:0;display:flex;flex-direction:column;--zz-w:44%;--zz-ov:1.25rem}
+.stop{position:relative;width:var(--zz-w);padding:clamp(0.875rem,2vh,1.25rem) 1.25rem;border-radius:1rem;border:0.0625rem solid rgba(255,255,255,.16);background:rgba(23,34,26,.55);backdrop-filter:blur(0.25rem);
+  opacity:.4;transform:translateY(0.75rem) scale(.96);transition:opacity .5s,transform .6s var(--ease),border-color .4s,background .4s,box-shadow .4s;z-index:2}
+/* zigue-zague: pares à direita, cada cartão sobe um pouco ao lado do anterior (estão em lados opostos, então não se tocam) */
+.stop:nth-of-type(even){align-self:flex-end}
+.stop+.stop{margin-top:calc(var(--zz-ov) * -1)}
+.stop.on{opacity:1;transform:none}
+.stop.cur{border-color:var(--farol);background:rgba(233,185,73,.1);box-shadow:0 0 0 0.25rem rgba(233,185,73,.12),0 1rem 2rem rgba(0,0,0,.3)}
+.stop::before{content:attr(data-n);display:inline-block;margin-bottom:0.375rem;font:400 0.9375rem/1 var(--font-display);letter-spacing:.14em;color:var(--muted);transition:color .4s}
 .stop.on::before{color:var(--farol)}
 .stop b{display:block;font:400 clamp(1.5rem,2.4vw,2.25rem)/1 var(--font-display);text-transform:uppercase;transition:color .4s}
 .stop.cur b{color:var(--farol)}
-.stop__txt{display:block;margin-top:0.5rem;font-size:0.875rem;line-height:1.4rem;color:var(--muted);max-width:22rem}
+.stop__txt{display:block;margin-top:0.5rem;font-size:0.875rem;line-height:1.4rem;color:var(--muted)}
+.route__svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:1}
+.route__bg{fill:none;stroke:rgba(255,255,255,.3);stroke-width:2;stroke-dasharray:6 8;stroke-linecap:round}
+.route__fg{fill:none;stroke:var(--farol);stroke-width:3;stroke-linecap:round}
+.route__arrow{fill:var(--farol);opacity:0;transition:opacity .3s}
+.route__arrow.on{opacity:1}
+.route__tip{fill:var(--farol);filter:drop-shadow(0 0 0.375rem rgba(233,185,73,.9))}
+.route__tip-ring{fill:none;stroke:var(--farol);stroke-width:2;opacity:.6;transform-box:fill-box;transform-origin:center;animation:pulso 1.6s ease-out infinite}
+@keyframes pulso{from{transform:scale(1);opacity:.7}to{transform:scale(2.6);opacity:0}}
+/* Telas largas e altas: título à esquerda, zigue-zague à direita */
+@media (min-width:901px) and (min-height:721px){
+  .trav__stage .wrap{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:clamp(2rem,5vw,5rem);align-items:center}
+  .trav__intro .trav__head{flex-direction:column;align-items:flex-start;gap:1.25rem}
+  .route{margin:0;--zz-w:47%;--zz-ov:4.5rem}
+}
 /* Legenda grande da etapa atual */
 .leg{margin-top:clamp(1rem,3vh,1.75rem);max-width:44rem;display:none}
 .leg__n{display:inline-block;font:400 1rem/1 var(--font-display);letter-spacing:.14em;text-transform:uppercase;background:var(--farol);color:var(--tinta-fixa);padding:0.4rem 0.625rem;border-radius:62rem}
@@ -231,11 +245,22 @@ a{color:inherit}
 @media (max-width:900px), (max-height:720px){
   .stop__txt{display:none}
   .leg{display:block}
-  .stop{padding-top:2rem}
-  .stop b{font-size:clamp(0.8125rem,3.5vw,1.5rem);letter-spacing:0;overflow-wrap:anywhere}
-  .stop::before{display:none}
+  .route{--zz-w:40%;--zz-ov:0.5rem}
+  .stop{padding:0.625rem 0.875rem}
+  .stop b{font-size:clamp(1.125rem,4.4vw,1.75rem)}
+  .stop::before{font-size:0.8125rem;margin-bottom:0.25rem}
 }
-@media (max-width:480px){ .route{gap:0.375rem} .stop__dot{width:1.25rem;height:1.25rem} .route::before,.route::after{top:0.5625rem;left:0.625rem;right:calc(25% - 0.625rem)} .trav__lead{display:none} }
+@media (max-width:480px){ .trav__lead{display:none} .route{--zz-w:46%} }
+/* celulares baixos (iPhone SE etc.): cartões mais justos para a legenda caber acima das ondas */
+@media (max-width:600px) and (max-height:740px){ .route{--zz-ov:0.875rem;margin-top:1rem} .stop{padding:0.5rem 0.75rem} .leg{margin-top:0.75rem} }
+/* Telas largas mas baixas (notebook 1366×700 etc.): não cabe descer em 4 linhas,
+   então o zigue-zague vira horizontal, com as etapas pares mais abaixo */
+@media (min-width:601px) and (max-height:720px){
+  .route{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));column-gap:clamp(1.75rem,4vw,3.5rem);align-items:start}
+  .stop{width:auto}
+  .stop+.stop{margin-top:0}
+  .stop:nth-of-type(even){margin-top:clamp(2.5rem,8vh,3.75rem)}
+}
 
 /* O mar virou uma camada de fundo da tela inteira: as montanhas ficam atrás dos textos */
 .sea{position:absolute;inset:0;z-index:1;pointer-events:none}
@@ -512,16 +537,19 @@ a{color:inherit}
     <div class="trav__track" id="trav-track">
       <div class="trav__stage">
         <div class="wrap">
+          <div class="trav__intro">
           <p class="eyebrow">Como trabalhamos</p>
           <div class="trav__head">
             <h2 class="display trav__title">Embarque<br><em>conosco</em></h2>
             <p class="trav__lead">Você sobe a bordo e a gente conduz a sua marca até o destino que você quer alcançar.</p>
           </div>
-          <ol class="route" id="steps" style="--prog:0">
-            <li class="stop on" data-n="01"><span class="stop__dot" aria-hidden="true"></span><b>Embarque</b><span class="stop__txt">Você sobe a bordo. Ouvimos a sua história, o seu negócio e, principalmente, onde você quer chegar.</span></li>
-            <li class="stop" data-n="02"><span class="stop__dot" aria-hidden="true"></span><b>Travessia</b><span class="stop__txt">Navegamos juntos pelo seu mercado: público, concorrência e oportunidades. Entendemos as correntes antes de definir o caminho.</span></li>
-            <li class="stop" data-n="03"><span class="stop__dot" aria-hidden="true"></span><b>Rota</b><span class="stop__txt">Traçamos a estratégia e colocamos a mão no remo: conteúdo, filmes, campanhas e mídia com metas claras.</span></li>
-            <li class="stop" data-n="04"><span class="stop__dot" aria-hidden="true"></span><b>Destino</b><span class="stop__txt">Chegamos onde você almeja: mais visibilidade, mais clientes, mais vendas. E já planejamos a próxima viagem.</span></li>
+          </div>
+          <ol class="route" id="steps">
+            <svg class="route__svg" id="route-svg" aria-hidden="true"></svg>
+            <li class="stop on" data-n="01"><b>Embarque</b><span class="stop__txt">Você sobe a bordo. Ouvimos a sua história, o seu negócio e, principalmente, onde você quer chegar.</span></li>
+            <li class="stop" data-n="02"><b>Travessia</b><span class="stop__txt">Navegamos juntos pelo seu mercado: público, concorrência e oportunidades. Entendemos as correntes antes de definir o caminho.</span></li>
+            <li class="stop" data-n="03"><b>Rota</b><span class="stop__txt">Traçamos a estratégia e colocamos a mão no remo: conteúdo, filmes, campanhas e mídia com metas claras.</span></li>
+            <li class="stop" data-n="04"><b>Destino</b><span class="stop__txt">Chegamos onde você almeja: mais visibilidade, mais clientes, mais vendas. E já planejamos a próxima viagem.</span></li>
           </ol>
           <div class="leg" id="step-desc" aria-live="polite">
             <span class="leg__n" id="leg-n">Etapa 01 de 04</span>
@@ -838,6 +866,58 @@ a{color:inherit}
   var routeEl = $('#steps'), steps = [].slice.call(document.querySelectorAll('#steps .stop')), legBox = $('#step-desc'), legN = $('#leg-n'), legT = $('#leg-t');
   var parts = [].slice.call(document.querySelectorAll('[data-part]')), pdots = [].slice.call(document.querySelectorAll('.dots a'));
   var lastStep = 0, legTimer = 0;
+  /* ===== Rota em zigue-zague =====
+     Liga cada cartão ao próximo com uma curva (da lateral de um até o topo do outro) e enche
+     cada trecho conforme a rolagem: o trecho k vai de u = k/3 até u = (k+1)/3. */
+  var NS = 'http://www.w3.org/2000/svg', routeSvg = $('#route-svg'), segs = [], tip, tipRing, lastU = 0;
+  function mk(tag, cls, parent){ var e = document.createElementNS(NS, tag); if (cls) e.setAttribute('class', cls); parent.appendChild(e); return e; }
+  function layoutRoute(){
+    routeSvg.textContent = ''; segs = [];
+    /* offset* ignora o transform de entrada dos cartões, então a curva usa a posição final de cada um */
+    function box(el){ return { left: el.offsetLeft, top: el.offsetTop, width: el.offsetWidth, height: el.offsetHeight, right: el.offsetLeft + el.offsetWidth }; }
+    var horiz = box(steps[2]).left > box(steps[1]).right;
+    for (var k = 0; k < steps.length - 1; k++) {
+      var a = box(steps[k]), b = box(steps[k + 1]), d, sx, sy, ex, ey;
+      if (horiz) {
+        /* zigue-zague horizontal: da lateral direita de um cartão até a lateral esquerda do próximo, numa curva em S */
+        sx = a.right; sy = a.top + a.height / 2; ex = b.left - 6; ey = b.top + b.height / 2;
+        var mx = (sx + ex) / 2;
+        d = 'M' + sx + ' ' + sy + ' C' + mx + ' ' + sy + ' ' + mx + ' ' + ey + ' ' + ex + ' ' + ey;
+      } else {
+        /* zigue-zague vertical: sai da lateral do cartão (um pouco acima do meio) e entra por cima do próximo, perto da borda de dentro */
+        var right = b.left > a.left;
+        sx = right ? a.right : a.left; sy = a.top + a.height * 0.4;
+        ex = right ? b.left + Math.min(b.width * 0.18, 48) : b.right - Math.min(b.width * 0.18, 48); ey = b.top - 6;
+        d = 'M' + sx + ' ' + sy + ' C' + ((sx + ex) / 2 + (right ? 10 : -10)) + ' ' + sy + ' ' + ex + ' ' + (ey - Math.max(24, (ey - sy) * 0.6)) + ' ' + ex + ' ' + ey;
+      }
+      mk('path', 'route__bg', routeSvg).setAttribute('d', d);
+      var fg = mk('path', 'route__fg', routeSvg); fg.setAttribute('d', d);
+      var len = fg.getTotalLength(); fg.style.strokeDasharray = len; fg.style.strokeDashoffset = len;
+      var ar = mk('path', 'route__arrow', routeSvg); ar.setAttribute('d', 'M-7 -9 L0 1 L7 -9 Z'); /* a seta segue a direção da curva no ponto de chegada */
+      var p1 = fg.getPointAtLength(Math.max(0, len - 2)), ang = Math.atan2(ey - p1.y, ex - p1.x) * 180 / Math.PI - 90;
+      ar.setAttribute('transform', 'translate(' + ex.toFixed(1) + ' ' + ey.toFixed(1) + ') rotate(' + ang.toFixed(1) + ')');
+      segs.push({ fg: fg, len: len, ar: ar });
+    }
+    tipRing = mk('circle', 'route__tip-ring', routeSvg); tipRing.setAttribute('r', 6);
+    tip = mk('circle', 'route__tip', routeSvg); tip.setAttribute('r', 6);
+    drawRoute(lastU);
+  }
+  function drawRoute(u){
+    lastU = u; if (!segs.length) return;
+    var n = segs.length, pt = null;
+    segs.forEach(function(sg, k){
+      var p = clamp(u * n - k, 0, 1);
+      sg.fg.style.strokeDashoffset = (sg.len * (1 - p)).toFixed(1);
+      sg.ar.classList.toggle('on', p >= 0.999);
+      if (p > 0 && p < 1) pt = sg.fg.getPointAtLength(sg.len * p);
+    });
+    /* a ponta brilhante só aparece enquanto um trecho está sendo desenhado */
+    var show = !!pt; tip.style.display = tipRing.style.display = show ? '' : 'none';
+    if (show) { tip.setAttribute('cx', pt.x); tip.setAttribute('cy', pt.y); tipRing.setAttribute('cx', pt.x); tipRing.setAttribute('cy', pt.y); }
+  }
+  layoutRoute();
+  if (window.ResizeObserver) new ResizeObserver(layoutRoute).observe(routeEl); else window.addEventListener('resize', layoutRoute);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(layoutRoute);
   function frame(){
     var y = scrollY, H = innerHeight;
     header.classList.toggle('solid', y > 40);
@@ -850,7 +930,7 @@ a{color:inherit}
       /* u: a linha da rota enche de 0 a 1 de forma contínua, com uma pequena folga no começo
          (a seção acabou de travar) e no fim (o Destino fica aceso um instante antes de soltar). */
       var u = clamp((t - 0.06) / 0.82, 0, 1), last = steps.length - 1;
-      routeEl.style.setProperty('--prog', u.toFixed(3));
+      drawRoute(u);
       /* cada parada acende exatamente quando a linha chega no ponto dela */
       var idx = Math.min(last, Math.floor(u * last + 0.02));
       steps.forEach(function(s, i){ s.classList.toggle('on', i <= idx); s.classList.toggle('cur', i === idx); });
@@ -864,7 +944,7 @@ a{color:inherit}
         }, 220);
       }
     } else {
-      words.forEach(function(w){ w.classList.add('on'); }); steps.forEach(function(s){ s.classList.add('on'); }); routeEl.style.setProperty('--prog', 1);
+      words.forEach(function(w){ w.classList.add('on'); }); steps.forEach(function(s){ s.classList.add('on'); }); drawRoute(1);
     }
     var c = 0; parts.forEach(function(s, i){ if (s.getBoundingClientRect().top < H * .5) c = i; });
     pdots.forEach(function(d, i){ d.classList.toggle('on', i === c); if (i === c) d.setAttribute('aria-current', 'true'); else d.removeAttribute('aria-current'); });
