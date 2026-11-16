@@ -64,11 +64,14 @@ a{color:inherit}
 
 /* ---------- Header ---------- */
 .top{color:#fff;position:fixed;top:env(safe-area-inset-top,0rem);left:0;right:0;z-index:60;transition:background .35s,backdrop-filter .35s,transform .45s var(--ease)}
-.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding-block:0.75rem}
+/* cabeçalho em 3 colunas: barco à esquerda, menus no centro, botão à direita */
+.top .wrap{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:1rem;padding-block:0.75rem}
 .top.solid{background:rgba(22,36,26,.9);backdrop-filter:blur(0.625rem);box-shadow:0 0.0625rem 0 var(--line)}
 .top__logo{display:block;line-height:0}
-.top__logo img{height:2.875rem;width:auto}
-.top nav{display:flex;align-items:center;gap:1.625rem}
+.top__logo svg{height:2.5rem;width:auto;fill:#5e9b63;transition:fill .25s,transform .35s var(--ease)}
+.top__logo:hover svg{fill:var(--farol);transform:rotate(-6deg)}
+.top__cta{justify-self:end}
+.top nav{display:flex;align-items:center;justify-content:center;gap:clamp(1.25rem,2.6vw,2.25rem)}
 .top nav a.lnk{text-decoration:none;font:500 0.875rem/1.25rem var(--font-sans);color:#cfdccb;transition:color .2s}
 .top nav a.lnk:hover{color:#fff}
 @media (max-width:860px){ .top nav a.lnk{display:none} }
@@ -401,14 +404,14 @@ a{color:inherit}
 
 <header class="top" id="top">
   <div class="wrap">
-    <a class="top__logo" href="#inicio" aria-label="A Barca Brasil — início"><img src="barca-mark.svg" alt="Barca" width="62" height="50"></a>
+    <a class="top__logo" href="#inicio" aria-label="A Barca Brasil — início"><svg viewBox="832 196 212 182" aria-hidden="true"><path d="M 851.308594 323.824219 C 853.269531 311.347656 903.242188 221.199219 903.242188 221.199219 L 955.175781 323.824219 Z M 851.308594 323.824219 "/><path d="M 927.289062 323.824219 C 929.609375 309.066406 988.722656 202.425781 988.722656 202.425781 L 1037.878906 325.90625 Z M 927.289062 323.824219 "/><path d="M 837.742188 338.1875 L 862.121094 372.066406 L 1020.585938 372.066406 L 1037.878906 332.449219 Z M 837.742188 338.1875 "/></svg></a>
     <nav aria-label="Principal">
       <a class="lnk" href="#videos">Trabalhos</a>
       <a class="lnk" href="#servicos">Serviços</a>
       <a class="lnk" href="#clientes">Clientes</a>
       <a class="lnk" href="#travessia">Embarque conosco</a>
-      <a class="btn btn--green btn--sm" href="#contato">Embarcar <span class="arr" aria-hidden="true">→</span></a>
     </nav>
+    <a class="btn btn--green btn--sm top__cta" href="#contato">Embarcar <span class="arr" aria-hidden="true">→</span></a>
   </div>
 </header>
 
