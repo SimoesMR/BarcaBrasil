@@ -99,6 +99,17 @@ a{color:inherit}
 .logo3d .ghost{position:absolute;inset:0;opacity:.18;transform:translateZ(-60px) scale(1.06);filter:blur(0.125rem) drop-shadow(0 0 1.875rem var(--green))}
 @keyframes boia{0%,100%{translate:0 0}50%{translate:0 -10px}}
 .intro{animation:chega 1.4s var(--ease) both}
+/* Abertura: o teaser cobre a tela; a chegada do logo do topo só começa quando ele termina */
+html.teasing{overflow:hidden}
+html.teasing .intro{animation-play-state:paused}
+.teaser{position:fixed;inset:0;z-index:200;background:#0b120d;display:grid;place-items:center;transition:opacity .9s var(--ease),visibility .9s}
+.teaser.out{opacity:0;visibility:hidden}
+.teaser video{width:100%;height:100%;object-fit:cover;display:block}
+.teaser__ui{position:absolute;right:calc(1rem + env(safe-area-inset-right,0rem));bottom:calc(1.25rem + env(safe-area-inset-bottom,0rem));display:flex;gap:0.625rem}
+.teaser__ui button{font:400 1rem/1 var(--font-display);letter-spacing:.12em;text-transform:uppercase;padding:0.75rem 1.125rem;border-radius:62rem;border:0;cursor:pointer;background:rgba(11,18,13,.55);color:#fff;box-shadow:inset 0 0 0 0.0625rem rgba(255,255,255,.45);backdrop-filter:blur(0.375rem);transition:background .2s,color .2s}
+.teaser__ui button:hover{background:var(--farol);color:var(--tinta-fixa);box-shadow:none}
+.teaser__bar{position:absolute;left:0;right:0;bottom:0;height:0.1875rem;background:rgba(255,255,255,.15)}
+.teaser__bar i{position:absolute;inset:0;background:var(--farol);transform-origin:left;transform:scaleX(var(--p,0))}
 @keyframes chega{from{opacity:0;transform:translateY(2.5rem) rotateX(25deg)}to{opacity:1;transform:none}}
 .hero__services{display:flex;flex-wrap:wrap;justify-content:center;gap:0.5rem 1.375rem;margin:0;padding:0;list-style:none;font:400 1.375rem/1.5rem var(--font-display);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
 .hero__services li+li::before{content:"";display:inline-block;width:0.375rem;height:0.375rem;border-radius:50%;background:var(--farol);margin-right:1.375rem;vertical-align:0.125rem}
@@ -308,19 +319,8 @@ a{color:inherit}
 @media (max-width:920px){ .contato__grid{grid-template-columns:1fr} }
 .contato__title{font-size:clamp(3.75rem,6.8vw,5.5rem)}
 .contato__title em{font-style:normal;color:var(--green-hi)}
-.card3d{margin-top:2.5rem;width:min(100%,32.5rem);aspect-ratio:504/272;perspective:75rem;cursor:pointer}
-.card3d__in{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform 1s var(--ease)}
-.card3d.flip .card3d__in{transform:rotateY(180deg)}
-.card3d__face{position:absolute;inset:0;border-radius:0.875rem;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;box-shadow:0 1.875rem 3.75rem rgba(0,0,0,.55),0 0 0 0.0625rem rgba(255,255,255,.07)}
-.card3d__front{background:#131313;display:grid;place-items:center}
-.card3d__front .m{position:absolute;left:0;right:0;bottom:0;opacity:.9}
-.card3d__front .l{position:relative;width:34%;margin-top:-8%}
-.card3d__back{background:#f4f4f1;color:#131313;transform:rotateY(180deg);display:flex;flex-direction:column;justify-content:center;gap:0.625rem;padding:6% 7%}
-.card3d__back .row{display:flex;align-items:center;gap:0.75rem;font:600 clamp(0.75rem,1.7vw,0.9375rem)/1.3 var(--font-sans);overflow-wrap:anywhere}
-.card3d__back .ic{flex:none;width:1.625rem;height:1.625rem;border-radius:50%;background:var(--green);display:grid;place-items:center}
-.card3d__back .ic svg{width:0.8125rem;height:0.8125rem;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
-.card3d__back img{position:absolute;right:6%;top:9%;width:13%}
-.card3d__hint{margin:0.75rem 0 0;font-size:0.8125rem;color:var(--muted)}
+/* Contato: o mesmo logo do topo, sem o cartão */
+.contato__logo{width:min(20rem,70%);margin:2.5rem 0 0}
 .info{display:flex;flex-direction:column;gap:0.875rem;margin-top:1.75rem}
 .info__row{display:flex;flex-wrap:wrap;align-items:center;gap:0.625rem 0.875rem}
 .info__row .lbl{font:400 1rem/1rem var(--font-display);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);width:6rem}
@@ -398,6 +398,39 @@ a{color:inherit}
 </style>
 </head>
 <body>
+<!-- Abertura: teaser em tela cheia; ao terminar (ou em "Pular") revela o logo do topo -->
+<div class="teaser" id="teaser" role="dialog" aria-label="Teaser da Barca Brasil" hidden>
+  <video id="teaser-v" muted playsinline preload="auto" poster="media/intro/teaser-poster.jpg"></video>
+  <div class="teaser__ui"><button type="button" id="teaser-sound">Ativar som</button><button type="button" id="teaser-skip">Pular →</button></div>
+  <div class="teaser__bar" aria-hidden="true"><i id="teaser-bar"></i></div>
+</div>
+<script>
+/* Roda antes do resto da página para o vídeo começar o quanto antes.
+   Aparece uma vez por sessão do navegador (?teaser na URL força); quem prefere menos movimento não vê. */
+(function(){
+  var box = document.getElementById('teaser'), v = document.getElementById('teaser-v'), root = document.documentElement, seen = false;
+  try { seen = sessionStorage.getItem('barca-teaser') === '1' && !/[?&]teaser\b/.test(location.search); } catch(e) {}
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (seen || reduce) { box.remove(); return; }
+  box.hidden = false; root.classList.add('teasing');
+  v.src = 'media/intro/teaser-' + (Math.max(screen.width, screen.height) * (window.devicePixelRatio || 1) > 1600 && innerWidth > 900 ? '1080' : '720') + '.mp4';
+  var done = false;
+  function end(){
+    if (done) return; done = true;
+    try { sessionStorage.setItem('barca-teaser', '1'); } catch(e) {}
+    root.classList.remove('teasing'); box.classList.add('out');
+    setTimeout(function(){ v.pause(); v.removeAttribute('src'); v.load(); box.remove(); }, 950);
+  }
+  window.barcaTeaserEnd = end;
+  var p = v.play(); if (p && p.catch) p.catch(end); /* autoplay bloqueado: vai direto para o site */
+  v.addEventListener('ended', end); v.addEventListener('error', end);
+  v.addEventListener('timeupdate', function(){ if (v.duration) document.getElementById('teaser-bar').style.transform = 'scaleX(' + (v.currentTime / v.duration).toFixed(3) + ')'; });
+  document.getElementById('teaser-skip').addEventListener('click', end);
+  var snd = document.getElementById('teaser-sound');
+  snd.addEventListener('click', function(){ v.muted = !v.muted; snd.textContent = v.muted ? 'Ativar som' : 'Sem som'; if (v.paused) v.play(); });
+  document.addEventListener('keydown', function k(e){ if (e.key === 'Escape') { end(); document.removeEventListener('keydown', k); } });
+})();
+</script>
 
 
 <div class="grain" aria-hidden="true"></div>
@@ -562,19 +595,10 @@ a{color:inherit}
       <div>
         <p class="eyebrow">Contato</p>
         <h2 class="display contato__title">Bora<br><em>embarcar?</em></h2>
-        <div class="card3d" id="card3d" role="button" tabindex="0" aria-label="Virar o cartão da Barca">
-          <div class="card3d__in">
-            <div class="card3d__face card3d__front"><img class="m" src="mountains.webp" alt=""><img class="l" src="barca-logo.svg" alt="Barca Brasil"></div>
-            <div class="card3d__face card3d__back">
-              <img src="barca-mark.svg" alt="">
-              <div class="row"><span class="ic"><svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></span>14 99700-4586</div>
-              <div class="row"><span class="ic"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.5 6.5h0"/></svg></span>abarcabrasil</div>
-              <div class="row"><span class="ic"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 6l-10 7L2 6"/></svg></span>embarca@barcapublicidade.com.br</div>
-              <div class="row"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg></span>barcapublicidade.com.br</div>
-            </div>
-          </div>
+        <div class="logo3d contato__logo" aria-hidden="true">
+          <img class="ghost" src="barca-logo.svg" alt="">
+          <img src="barca-logo.svg" alt="" width="640" height="600" loading="lazy">
         </div>
-        <p class="card3d__hint">Toque no cartão para virar.</p>
         <div class="info">
           <div class="info__row"><span class="lbl">WhatsApp</span><span class="val" id="fone">(14) 99700-4586</span><button class="copy" type="button" data-copy="fone">Copiar</button></div>
           <div class="info__row"><span class="lbl">E-mail</span><span class="val" id="mail">embarca@barcapublicidade.com.br</span><button class="copy" type="button" data-copy="mail">Copiar</button></div>
@@ -913,12 +937,6 @@ a{color:inherit}
     build();
     var rt; window.addEventListener('resize', function(){ clearTimeout(rt); rt = setTimeout(build, 200); });
   })();
-
-  /* ===== Cartão 3D ===== */
-  var card = $('#card3d');
-  function flip(){ card.classList.toggle('flip'); }
-  card.addEventListener('click', flip);
-  card.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flip(); } });
 
   /* ===== Scroll: header, parallax, manifesto, travessia, pontos ===== */
   var header = $('#top'), hero = $('#inicio'), heroMtn = $('#hero-mtn'), track = $('#trav-track'), seaMtn = $('#sea-mtn');
