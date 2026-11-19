@@ -271,10 +271,6 @@ html.teasing .intro{animation-play-state:paused}
 .sea__mtn img{width:100%;height:auto;display:block}
 .sea__boat{position:absolute;left:0;bottom:clamp(3rem,8vh,5rem);z-index:2;will-change:transform;line-height:0}
 .sea__boat img{width:clamp(5rem,min(10vw,16vh),10.625rem);height:auto;filter:drop-shadow(0 0.625rem 1.125rem rgba(0,0,0,.6))}
-.sea__waves{position:absolute;left:0;right:0;bottom:0;height:clamp(4.375rem,12vh,8.125rem);z-index:3}
-.sea__waves svg{width:100%;height:100%;display:block}
-.wv-a{animation:mare 14s linear infinite} .wv-b{animation:mare 9s linear infinite reverse}
-@keyframes mare{to{transform:translateX(-400px)}}
 .sea__meter{display:none;position:absolute;right:var(--gr);bottom:0.875rem;z-index:4;font:700 0.75rem/1.125rem var(--font-sans);letter-spacing:.2em;text-transform:uppercase;color:#cfdccb;font-variant-numeric:tabular-nums}
 
 /* Embarcados: esteiras 3D de logos */
@@ -552,7 +548,6 @@ html.teasing .intro{animation-play-state:paused}
         <div class="sea" aria-hidden="true">
           <div class="sea__mtn" id="sea-mtn"><img src="mountains.webp" alt="" width="2400" height="352"></div>
           
-          <div class="sea__waves"><svg viewBox="0 0 1600 110" preserveAspectRatio="none"><path class="wv-b" fill="var(--mata-600)" d="M0 110 L0 55.0 C66.7 85.0 133.3 85.0 200.0 55.0 C266.7 25.0 333.3 25.0 400.0 55.0 C466.7 85.0 533.3 85.0 600.0 55.0 C666.7 25.0 733.3 25.0 800.0 55.0 C866.7 85.0 933.3 85.0 1000.0 55.0 C1066.7 25.0 1133.3 25.0 1200.0 55.0 C1266.7 85.0 1333.3 85.0 1400.0 55.0 C1466.7 25.0 1533.3 25.0 1600.0 55.0 C1666.7 85.0 1733.3 85.0 1800.0 55.0 C1866.7 25.0 1933.3 25.0 2000.0 55.0 L2000 110 Z"/><path class="wv-a" fill="var(--mata-700)" d="M0 110 L0 55.0 C66.7 31.0 133.3 31.0 200.0 55.0 C266.7 79.0 333.3 79.0 400.0 55.0 C466.7 31.0 533.3 31.0 600.0 55.0 C666.7 79.0 733.3 79.0 800.0 55.0 C866.7 31.0 933.3 31.0 1000.0 55.0 C1066.7 79.0 1133.3 79.0 1200.0 55.0 C1266.7 31.0 1333.3 31.0 1400.0 55.0 C1466.7 79.0 1533.3 79.0 1600.0 55.0 C1666.7 31.0 1733.3 31.0 1800.0 55.0 C1866.7 79.0 1933.3 79.0 2000.0 55.0 L2000 110 Z"/></svg></div>
           
         </div>
       </div>
