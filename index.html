@@ -96,7 +96,6 @@ a{color:inherit}
 .hero__inner{position:relative;z-index:3;display:flex;flex-direction:column;align-items:center;text-align:center;gap:1.625rem;padding-left:var(--gl);padding-right:var(--gr)}
 .logo3d{position:relative;width:min(25rem,68vw);transform-style:preserve-3d;transition:transform .6s var(--ease);animation:boia 6s ease-in-out infinite}
 .logo3d img{display:block;width:100%;height:auto;filter:drop-shadow(0 1.875rem 2.5rem rgba(0,0,0,.6))}
-.logo3d .ghost{position:absolute;inset:0;opacity:.18;transform:translateZ(-60px) scale(1.06);filter:blur(0.125rem) drop-shadow(0 0 1.875rem var(--green))}
 @keyframes boia{0%,100%{translate:0 0}50%{translate:0 -10px}}
 .intro{animation:chega 1.4s var(--ease) both}
 /* Abertura: o teaser é a primeira seção. Ele fica parado (sticky) enquanto o hero sobe por cima,
@@ -448,7 +447,6 @@ html.teasing .intro{animation-play-state:paused}
     <div class="hero__inner">
       <h1 class="sr">A Barca Brasil — agência de design, audiovisual, marketing e publicidade em Bauru/SP</h1>
       <div class="logo3d intro" id="logo3d">
-        <img class="ghost" src="barca-logo.svg" alt="" aria-hidden="true">
         <img src="barca-logo.svg" alt="Barca Brasil — A nossa marca é descobrir o potencial da sua!" width="640" height="600">
       </div>
       <ul class="hero__services intro" style="animation-delay:.15s"><li>Design</li><li>Audiovisual</li><li>Marketing</li><li>Publicidade</li></ul>
@@ -570,7 +568,6 @@ html.teasing .intro{animation-play-state:paused}
         <p class="eyebrow">Contato</p>
         <h2 class="display contato__title">Bora<br><em>embarcar?</em></h2>
         <div class="logo3d contato__logo" aria-hidden="true">
-          <img class="ghost" src="barca-logo.svg" alt="">
           <img src="barca-logo.svg" alt="" width="640" height="600" loading="lazy">
         </div>
         <div class="info">
