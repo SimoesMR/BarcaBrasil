@@ -15,12 +15,14 @@
 :root{
   /* Paleta da V1 (design system A Barca Brasil) */
   --mata-900:#16241a; --mata-800:#1f3322; --mata-700:#2f4a30; --mata-600:#42613f; --mata-500:#567b5a; --mata-300:#9db89a;
+  /* Fundo escuro do site (antes eram os verdes da mata) */
+  --fundo:#2b2b2b;
   --farol:#e9b949; --tinta-fixa:#17221a; --logo-green:#47754c;
   /* Tema: tons das seções claras (Areia / Mar aberto) */
   --sand:#f4efe4; --sand-2:#ebe5d6; --paper:#ffffff; --tinta:#17221a; --tinta-2:#4d5c50; --linha:#d9d2c1; --brand-t:#3f6343; --ghost-l:#d6cfbd;
   --logo-f:grayscale(1) brightness(.62) contrast(1.25); --logo-fh:grayscale(1) brightness(.3) contrast(1.3); --boat-light:#47754c; --tile-sh:#d9d2c1;
   /* Tokens de componente: padrão = tom escuro (faixas verdes) */
-  --bg:var(--mata-700); --bg-solid:var(--mata-800); --ink:#ffffff; --muted:#cfdccb; --line:rgba(255,255,255,.16); --line-strong:rgba(255,255,255,.22);
+  --bg:var(--fundo); --bg-solid:var(--fundo); --ink:#ffffff; --muted:#cfdccb; --line:rgba(255,255,255,.16); --line-strong:rgba(255,255,255,.22);
   --green:var(--mata-500); --green-hi:var(--farol); --ghost:rgba(255,255,255,.14);
   --btn-bg:var(--farol); --btn-ink:var(--tinta-fixa); --btn-hbg:#ffffff; --btn-hink:var(--tinta-fixa); --btn-line:rgba(255,255,255,.45);
   --card-a:rgba(255,255,255,.08); --card-b:rgba(255,255,255,.03); --svc-dim:rgba(0,0,0,.3); --chip:rgba(255,255,255,.12); --chip-ink:#ffffff;
@@ -30,11 +32,11 @@
   --gl:max(1rem, env(safe-area-inset-left, 0rem)); --gr:max(1rem, env(safe-area-inset-right, 0rem));
 }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
-  --sand:#16241a; --sand-2:#1b2c1f; --paper:#1f3322; --tinta:#ebe5d6; --tinta-2:#a9bfa6; --linha:#2c4130; --brand-t:#8fbf8f; --ghost-l:#2f4532;
-  --logo-f:grayscale(1) brightness(1.5) contrast(.9); --logo-fh:grayscale(1) brightness(2) contrast(1); --boat-light:#8fbf8f; --tile-sh:#0f1a12; color-scheme:dark } }
+  --sand:var(--fundo); --sand-2:var(--fundo); --paper:#353535; --tinta:#ebe5d6; --tinta-2:#a9bfa6; --linha:#404040; --brand-t:#8fbf8f; --ghost-l:#3c3c3c;
+  --logo-f:grayscale(1) brightness(1.5) contrast(.9); --logo-fh:grayscale(1) brightness(2) contrast(1); --boat-light:#8fbf8f; --tile-sh:#1f1f1f; color-scheme:dark } }
 :root[data-theme="dark"]{
-  --sand:#16241a; --sand-2:#1b2c1f; --paper:#1f3322; --tinta:#ebe5d6; --tinta-2:#a9bfa6; --linha:#2c4130; --brand-t:#8fbf8f; --ghost-l:#2f4532;
-  --logo-f:grayscale(1) brightness(1.5) contrast(.9); --logo-fh:grayscale(1) brightness(2) contrast(1); --boat-light:#8fbf8f; --tile-sh:#0f1a12; color-scheme:dark }
+  --sand:var(--fundo); --sand-2:var(--fundo); --paper:#353535; --tinta:#ebe5d6; --tinta-2:#a9bfa6; --linha:#404040; --brand-t:#8fbf8f; --ghost-l:#3c3c3c;
+  --logo-f:grayscale(1) brightness(1.5) contrast(.9); --logo-fh:grayscale(1) brightness(2) contrast(1); --boat-light:#8fbf8f; --tile-sh:#1f1f1f; color-scheme:dark }
 .tone-light{
   --bg:var(--sand); --bg-solid:var(--sand); --ink:var(--tinta); --muted:var(--tinta-2); --line:var(--linha); --line-strong:var(--linha);
   --green:var(--mata-500); --green-hi:var(--brand-t); --ghost:var(--ghost-l);
@@ -50,7 +52,7 @@ html{font-size:16px;font-synthesis:none}
 @media (min-width:3400px){ html{font-size:24px} }
 html{scroll-behavior:smooth;background:var(--sand)}
 body{background:var(--sand);color:var(--tinta);font:400 1rem/1.6875rem var(--font-sans);overflow-x:hidden;-webkit-font-smoothing:antialiased}
-body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0rem);z-index:80;background:var(--mata-900)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0rem);z-index:80;background:var(--fundo)}
 main{overflow-x:clip}
 img,video{max-width:100%}
 a{color:inherit}
@@ -66,7 +68,7 @@ a{color:inherit}
 .top{color:#fff;position:fixed;top:env(safe-area-inset-top,0rem);left:0;right:0;z-index:60;transition:background .35s,backdrop-filter .35s,transform .45s var(--ease)}
 /* cabeçalho em 3 colunas: barco à esquerda, menus no centro, botão à direita */
 .top .wrap{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:1rem;padding-block:0.75rem}
-.top.solid{background:rgba(22,36,26,.9);backdrop-filter:blur(0.625rem);box-shadow:0 0.0625rem 0 var(--line)}
+.top.solid{background:rgba(43,43,43,.9);backdrop-filter:blur(0.625rem);box-shadow:0 0.0625rem 0 var(--line)}
 .top__logo{display:block;line-height:0}
 .top__logo svg{height:2.5rem;width:auto;fill:#4d7653;transition:fill .25s,transform .35s var(--ease)}
 .top__logo:hover svg{fill:var(--farol);transform:rotate(-6deg)}
@@ -88,7 +90,7 @@ a{color:inherit}
 .btn--sm{padding:0.5rem 1.125rem;font-size:1rem}
 
 /* ---------- Hero 3D ---------- */
-.hero{position:relative;min-height:min(56.25rem,100svh);display:flex;align-items:center;justify-content:center;overflow:hidden;padding-top:calc(5.625rem + env(safe-area-inset-top,0rem));padding-bottom:9.375rem;perspective:68.75rem;background:radial-gradient(120% 75% at 50% 110%, var(--mata-600) 0%, var(--mata-700) 35%, var(--mata-900) 75%)}
+.hero{position:relative;min-height:min(56.25rem,100svh);display:flex;align-items:center;justify-content:center;overflow:hidden;padding-top:calc(5.625rem + env(safe-area-inset-top,0rem));padding-bottom:9.375rem;perspective:68.75rem;background:var(--fundo)}
 #ocean{position:absolute;inset:0;width:100%;height:100%;display:block}
 .hero__inner{position:relative;z-index:3;display:flex;flex-direction:column;align-items:center;text-align:center;gap:1.625rem;padding-left:var(--gl);padding-right:var(--gr)}
 .logo3d{position:relative;width:min(25rem,68vw);transform-style:preserve-3d;transition:transform .6s var(--ease);animation:boia 6s ease-in-out infinite}
@@ -140,7 +142,7 @@ html.teasing .intro{animation-play-state:paused}
 }
 
 /* Vídeos: coverflow 3D */
-.videos{background:linear-gradient(var(--mata-700),var(--mata-800) 45%,var(--mata-800) 60%,var(--mata-700))}
+.videos{background:var(--fundo)}
 .videos.parte{padding-bottom:clamp(4rem,8vw,6.5rem)}
 .videos .head{margin-bottom:clamp(1.5rem,4vw,3rem)}
 .flow{--cw:clamp(14.5rem,25vw,21rem);position:relative;height:calc(var(--cw) * 1.25 + 2rem);perspective:87.5rem;touch-action:pan-y;user-select:none;-webkit-user-select:none;cursor:grab;outline:none}
@@ -149,7 +151,7 @@ html.teasing .intro{animation-play-state:paused}
 .flow.drag .vcard{transition:none}
 .flow__stage{position:absolute;inset:0;transform-style:preserve-3d}
 .vcard{position:absolute;left:50%;top:50%;width:var(--cw);aspect-ratio:4/5;margin:0;transform-style:preserve-3d;transition:transform .7s var(--ease),filter .7s var(--ease),opacity .7s;border-radius:1rem;will-change:transform}
-.vcard__frame{position:absolute;inset:0;border-radius:1rem;overflow:hidden;background:#0f1a12;box-shadow:0 2.5rem 5rem rgba(0,0,0,.45),0 0 0 0.0625rem rgba(255,255,255,.08)}
+.vcard__frame{position:absolute;inset:0;border-radius:1rem;overflow:hidden;background:#1f1f1f;box-shadow:0 2.5rem 5rem rgba(0,0,0,.45),0 0 0 0.0625rem rgba(255,255,255,.08)}
 .vcard .poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;transition:opacity .6s}
 /* hqdefault vem com faixas pretas: amplia para escondê-las */
 .vcard--hq .poster{transform:scale(1.35)}
@@ -193,9 +195,9 @@ html.teasing .intro{animation-play-state:paused}
 }
 
 /* Lightbox */
-.round{width:3.25rem;height:3.25rem;border-radius:50%;border:0.09375rem solid rgba(255,255,255,.4);background:rgba(15,26,18,.6);color:#fff;font-size:1.25rem;cursor:pointer;transition:background .25s,border-color .25s,color .25s}
+.round{width:3.25rem;height:3.25rem;border-radius:50%;border:0.09375rem solid rgba(255,255,255,.4);background:rgba(20,20,20,.6);color:#fff;font-size:1.25rem;cursor:pointer;transition:background .25s,border-color .25s,color .25s}
 .round:hover{background:var(--farol);color:var(--tinta-fixa);border-color:var(--farol)}
-.lb{position:fixed;inset:0;z-index:100;background:rgba(15,26,18,.94);backdrop-filter:blur(0.5rem);display:grid;place-items:center;padding:calc(3.5rem + env(safe-area-inset-top,0rem)) var(--gr) calc(1.5rem + env(safe-area-inset-bottom,0rem)) var(--gl);opacity:0;transition:opacity .35s}
+.lb{position:fixed;inset:0;z-index:100;background:rgba(20,20,20,.94);backdrop-filter:blur(0.5rem);display:grid;place-items:center;padding:calc(3.5rem + env(safe-area-inset-top,0rem)) var(--gr) calc(1.5rem + env(safe-area-inset-bottom,0rem)) var(--gl);opacity:0;transition:opacity .35s}
 .lb.open{opacity:1}
 .lb__player{width:min(68.75rem,100%,calc(82vh * 16 / 9));aspect-ratio:16/9;border-radius:0.75rem;overflow:hidden;background:#000;box-shadow:0 1.875rem 5rem rgba(0,0,0,.7);transform:scale(.92) rotateX(10deg);transition:transform .5s var(--ease)}
 .lb--short .lb__player{width:min(100%,calc(82vh * 9 / 16));aspect-ratio:9/16}
@@ -220,7 +222,7 @@ html.teasing .intro{animation-play-state:paused}
 .grid4 .svc:hover{transform:scale(1.04);box-shadow:inset 0 0 0 100vmax var(--svc-dim),0 1.125rem 1.875rem rgba(23,34,26,.18)}
 
 /* Travessia */
-.trav{background:var(--mata-800)}
+.trav{background:var(--fundo)}
 /* A seção não trava mais a tela: ela rola normalmente e a rota vai se desenhando conforme a página desce. */
 .trav__track{position:relative}
 .trav__stage{position:relative;overflow:hidden;overflow:clip;padding-bottom:clamp(7rem,16vh,10rem)}
@@ -232,7 +234,7 @@ html.teasing .intro{animation-play-state:paused}
 /* Rota em zigue-zague: cartões alternando esquerda/direita, com um respiro entre eles por onde passa
    a curva. A curva é um SVG desenhado pelo JS a partir da posição real dos cartões (layoutRoute). */
 .route{position:relative;list-style:none;margin:clamp(2rem,6vh,3.5rem) 0 0;padding:0;display:flex;flex-direction:column;gap:var(--zz-gap);--zz-w:84%;--zz-gap:3.75rem}
-.stop{position:relative;width:var(--zz-w);padding:1.125rem 1.25rem 1.25rem;border-radius:1rem;border:0.0625rem solid rgba(255,255,255,.16);background:rgba(23,34,26,.6);backdrop-filter:blur(0.25rem);
+.stop{position:relative;width:var(--zz-w);padding:1.125rem 1.25rem 1.25rem;border-radius:1rem;border:0.0625rem solid rgba(255,255,255,.16);background:rgba(43,43,43,.6);backdrop-filter:blur(0.25rem);
   opacity:.35;transform:translateY(1.5rem) scale(.96);transition:opacity .6s,transform .7s var(--ease),border-color .4s,background .4s,box-shadow .4s;z-index:2}
 .stop:nth-of-type(even){align-self:flex-end}
 .stop.on{opacity:1;transform:none}
@@ -296,7 +298,7 @@ html.teasing .intro{animation-play-state:paused}
 .clientes__acts{display:flex;flex-wrap:wrap;gap:0.75rem}
 /* Todas as marcas */
 .marcas{width:min(72rem,calc(100% - 2rem));max-height:min(88vh,60rem);padding:0;border:0.0625rem solid var(--line);border-radius:1.25rem;background:var(--bg-solid);color:var(--ink);box-shadow:0 1.875rem 5rem rgba(0,0,0,.45);overscroll-behavior:contain}
-.marcas::backdrop{background:rgba(15,26,18,.75);backdrop-filter:blur(0.375rem)}
+.marcas::backdrop{background:rgba(20,20,20,.75);backdrop-filter:blur(0.375rem)}
 .marcas[open]{animation:marcas-in .4s var(--ease)}
 @keyframes marcas-in{from{opacity:0;transform:translateY(1.5rem) scale(.97)}to{opacity:1;transform:none}}
 .marcas__top{position:sticky;top:0;z-index:1;display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:1.25rem 1.5rem;background:var(--bg-solid);border-bottom:0.0625rem solid var(--line)}
@@ -311,7 +313,7 @@ html.teasing .intro{animation-play-state:paused}
 @media (max-width:640px){ .tile{width:10rem;height:6.25rem} .tile__card{padding:1rem 1.125rem} .marcas__grid{grid-template-columns:repeat(2,1fr);padding:1rem;gap:0.75rem} .marcas__grid .tile{height:5.5rem} .marcas__top{padding:1rem} .belts{gap:0.75rem;transform:rotateX(12deg) rotateZ(-3deg)} .belt__track{gap:0.75rem} }
 
 /* Contato + cartão 3D */
-.contato{background:radial-gradient(90% 80% at 80% 20%, var(--mata-600) 0%, var(--mata-700) 60%)}
+.contato{background:var(--fundo)}
 .contato__grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(2.25rem,6vw,5.625rem);align-items:start}
 .contato__grid>*{min-width:0}
 @media (max-width:920px){ .contato__grid{grid-template-columns:1fr} }
@@ -325,7 +327,7 @@ html.teasing .intro{animation-play-state:paused}
 .info__row .val{font:600 1.125rem/1.5rem var(--font-sans);user-select:all;overflow-wrap:anywhere}
 .copy{background:none;border:0.0625rem solid var(--btn-line);color:var(--ink);border-radius:62.4375rem;padding:0.25rem 0.75rem;font:600 0.75rem/1.125rem var(--font-sans);cursor:pointer}
 .copy:hover{background:var(--ink);color:var(--bg-solid)}
-.form{background:rgba(22,36,26,.5);backdrop-filter:blur(0.375rem);border:0.0625rem solid var(--line);border-radius:1.125rem;padding:clamp(1.375rem,3vw,2.25rem);display:flex;flex-direction:column;gap:1rem}
+.form{background:rgba(0,0,0,.18);backdrop-filter:blur(0.375rem);border:0.0625rem solid var(--line);border-radius:1.125rem;padding:clamp(1.375rem,3vw,2.25rem);display:flex;flex-direction:column;gap:1rem}
 .form h3{margin:0;font:400 2.125rem/1 var(--font-display);text-transform:uppercase}
 .field{display:flex;flex-direction:column;gap:0.375rem}
 .field>label,.field>.lbl{font:600 0.8125rem/1.25rem var(--font-sans);color:var(--muted)}
@@ -342,14 +344,14 @@ html.teasing .intro{animation-play-state:paused}
 .form__msg a{color:var(--green-hi);font-weight:700}
 
 /* Rodapé */
-.foot{background:var(--mata-900);color:var(--ink);position:relative;overflow:hidden;padding-bottom:4.5rem}
+.foot{background:var(--fundo);color:var(--ink);position:relative;overflow:hidden;padding-bottom:4.5rem}
 .foot__mtn{opacity:.18;line-height:0}
 .foot__mtn img{width:100%;display:block}
 .foot .wrap{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1.25rem;padding-block:1.75rem;color:var(--muted);font-size:0.875rem}
 .foot img.l{height:3.5rem;width:auto;display:block}
 
 /* Pontos das partes */
-.dots{position:fixed;right:calc(1rem + env(safe-area-inset-right,0rem));top:50%;transform:translateY(-50%);z-index:50;display:flex;flex-direction:column;gap:0.75rem;list-style:none;margin:0;padding:0.75rem 0.5625rem;border-radius:62.4375rem;background:rgba(22,36,26,.72);backdrop-filter:blur(0.375rem);border:0.0625rem solid rgba(255,255,255,.15)}
+.dots{position:fixed;right:calc(1rem + env(safe-area-inset-right,0rem));top:50%;transform:translateY(-50%);z-index:50;display:flex;flex-direction:column;gap:0.75rem;list-style:none;margin:0;padding:0.75rem 0.5625rem;border-radius:62.4375rem;background:rgba(43,43,43,.72);backdrop-filter:blur(0.375rem);border:0.0625rem solid rgba(255,255,255,.15)}
 .dots a{display:block;position:relative;text-decoration:none}
 .dots .d{display:block;width:0.5625rem;height:0.5625rem;border-radius:50%;border:0.09375rem solid #cfdccb;transition:transform .25s,background .25s,border-color .25s}
 .dots .t{position:absolute;right:1.625rem;top:50%;translate:0 -50%;white-space:nowrap;font:600 0.75rem/1rem var(--font-sans);background:#fff;color:var(--tinta-fixa);padding:0.1875rem 0.5rem;border-radius:0.25rem;opacity:0;transition:opacity .2s;pointer-events:none}
@@ -358,7 +360,7 @@ html.teasing .intro{animation-play-state:paused}
 @media (max-width:860px){ .dots{display:none} }
 
 /* A viagem: o barco do logo cruza cada seção conforme a rolagem */
-.voyage{position:fixed;left:0;right:0;bottom:0;height:calc(4.75rem + env(safe-area-inset-bottom,0rem));z-index:55;pointer-events:none;color:var(--vcolor,#f4efe4);transition:color .5s,opacity .5s var(--ease),transform .6s var(--ease)}
+.voyage{position:fixed;left:0;right:0;bottom:0;height:calc(4.75rem + env(safe-area-inset-bottom,0rem));z-index:55;pointer-events:none;color:#4d7653;transition:opacity .5s var(--ease),transform .6s var(--ease)}
 .voyage.away{opacity:0;transform:translateY(110%)}
 .voyage__line{position:absolute;left:0;right:0;bottom:calc(0.55rem + env(safe-area-inset-bottom,0rem));height:0.75rem;background:currentColor;opacity:.45;
   -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='12'%3E%3Cpath d='M0 6 Q12 0 24 6 T48 6' fill='none' stroke='black' stroke-width='2'/%3E%3C/svg%3E") repeat-x 0 0/3rem 0.75rem;
@@ -964,7 +966,7 @@ html.teasing .intro{animation-play-state:paused}
      termina uma seção na borda onde a próxima começa e a viagem nunca dá saltos. */
   (function(){
     var vy = $('#voyage'), vb = $('#vboat'), vf = $('#vflip'), vt = $('#vtag');
-    var secs = parts, cur = 0, target = 0, x = null, lastLabel = '', lastTone = '', raf = 0, lean = 0;
+    var secs = parts, cur = 0, target = 0, x = null, lastLabel = '', raf = 0, lean = 0;
     function measure(){
       var W = document.documentElement.clientWidth, bw = vb.offsetWidth, mid = scrollY + innerHeight * 0.5, i = 0;
       for (var k = 0; k < secs.length; k++) if (secs[k].offsetTop <= mid) i = k;
@@ -978,7 +980,6 @@ html.teasing .intro{animation-play-state:paused}
       var t = i % 2 ? 1 - p : p;
       target = (W - bw - 2 * 12) * t + 12;
       if (s.dataset.label !== lastLabel) { lastLabel = s.dataset.label; vt.textContent = lastLabel; }
-      if (s.dataset.tone !== lastTone) { lastTone = s.dataset.tone; vy.style.setProperty('--vcolor', lastTone === 'dark' ? '#f4efe4' : 'var(--boat-light)'); }
       if (x === null) x = target;
       if (!raf) raf = requestAnimationFrame(step);
     }
